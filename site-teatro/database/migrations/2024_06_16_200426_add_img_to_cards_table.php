@@ -8,21 +8,22 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * Método responsável por aplicar a migração, adicionando uma nova coluna 'img' na tabela 'cards'
+     * Este método aplica a migração, adicionando a coluna 'img' à tabela 'cards'.
      * 
      * @return void
      */
     public function up()
     {
-        // Adiciona a coluna 'img' na tabela 'cards'
+        // Adiciona a coluna 'img' à tabela 'cards'
         Schema::table('cards', function (Blueprint $table) {
-            $table->string('img')->default('default_image.jpg'); // Define um valor padrão Permite valores nulos na coluna 'img' do tipo string
+            // Adiciona a coluna 'img' do tipo string com um valor padrão
+            $table->string('img')->default('default_image.jpg'); // Permite valores nulos na coluna 'img'
         });
     }
 
     /**
      * Reverse the migrations.
-     * Método responsável por reverter a migração, removendo a coluna 'img' da tabela 'cards'
+     * Este método reverte a migração, removendo a coluna 'img' da tabela 'cards'.
      * 
      * @return void
      */

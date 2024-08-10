@@ -31,7 +31,6 @@
         <h2>Próximas Apresentações</h2>
         <p>Veja as apresentações dos próximos dias</p>
         <div id="cards-container" class="row">
-            <!--ERRO NO FOREACH-->
             @forelse($cards as $card) 
             <div class="card col-md-3">
                 <div class="card-body">

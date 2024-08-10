@@ -8,25 +8,30 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * Este método aplica a migração, adicionando a coluna 'ticket_link' à tabela 'cards'.
      *
      * @return void
      */
     public function up()
     {
         Schema::table('cards', function (Blueprint $table) {
-            $table->string('ticket_link')->nullable()->after('img'); // Adiciona a coluna ticket_link
+            // Adiciona a coluna 'ticket_link' do tipo string, que pode ser nula
+            // A coluna será adicionada após a coluna 'img'
+            $table->string('ticket_link')->nullable()->after('img');
         });
     }
 
     /**
      * Reverse the migrations.
+     * Este método reverte a migração, removendo a coluna 'ticket_link' da tabela 'cards'.
      *
      * @return void
      */
     public function down()
     {
         Schema::table('cards', function (Blueprint $table) {
-            $table->dropColumn('ticket_link'); // Remove a coluna ticket_link
+            // Remove a coluna 'ticket_link' da tabela 'cards'
+            $table->dropColumn('ticket_link');
         });
     }
 };

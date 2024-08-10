@@ -11,14 +11,23 @@ class Adm extends Model implements Authenticatable
 {
     use HasFactory, AuthenticatableTrait;
 
-    // Se a tabela no banco de dados não segue a convenção plural do Laravel,
-    // defina o nome da tabela aqui.
+    /**
+     *  Define o nome da tabela associada ao modelo.
+     * Se a tabela não seguir a convenção plural do Laravel (ou seja, 'adms' ao invés de 'adm'),
+     *  defina o nome da tabela aqui.
+     */
     protected $table = 'adm';
 
-    // Se a tabela não tem os campos 'created_at' e 'updated_at',
-    // defina isso como false.
+    /**
+     * Define se a tabela usa as colunas 'created_at' e 'updated_at'.
+     * Se a tabela não possui essas colunas, defina como false.
+     */
     public $timestamps = false;
 
-    // Defina os campos que podem ser preenchidos em massa.
+    /** 
+     *  Define os campos que podem ser preenchidos em massa (mass assignable).
+     * Isso ajuda a proteger contra ataques de injeção de massa, permitindo
+     * apenas os campos especificados serem preenchidos via requests.
+     */
     protected $fillable = ['username', 'password'];
 }

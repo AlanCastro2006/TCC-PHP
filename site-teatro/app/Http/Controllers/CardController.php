@@ -3,140 +3,123 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-//Chamando o Model Card
-use App\Models\Card;
+use App\Models\Card; // Importa o model Card
 
 class CardController extends Controller
 {
+    // Exibe a página inicial com todos os cards visíveis
     public function showHomePage()
     {
         $cards = Card::where('visible', true)->get(); // Seleciona apenas os cards visíveis
-    
-        return view('dashboard/home', compact('cards'));
+        return view('dashboard/home', compact('cards')); // Retorna a view com os cards
     }
-    //Renderiza a lista de cards com um método que tráz os valores da tabela através do index
-    public function index(){
 
-        //Seleciona todos os "cards" e armazena no array cards
-        $cards = Card::all();
+    // Renderiza a lista de cards para a área administrativa
+    public function index()
+    {
+        $cards = Card::all(); // Seleciona todos os cards
+        return view('adm/list', ['cards' => $cards]); // Retorna a view com os cards
+    }
 
-        // Retorna a view 'adm/list' com o array 'cards'
-        return view('adm/list',['cards' => $cards]);
+    // Armazena um novo card no banco de dados
+    public function store(Request $request)
+    {
+        $card = new Card(); // Cria uma nova instância de Card
 
-    }//fim do index
-
-    public function store(Request $request){
-
-        // Cria uma nova instância de Card
-        $card = new Card();
-
-        // Define os atributos do card com os valores da requisição
+        // Define os atributos do card com os valores do formulário
         $card->name = $request->name;
         $card->date = $request->date;
         $card->local = $request->local;
-        $card->ticket_link = $request->ticket_link; // Adiciona o link
+        $card->ticket_link = $request->ticket_link; // Adiciona o link de ingressos
 
-        //Image Upload
-        // Verifica se o request contém um arquivo 'img' e se ele é válido
-        if($request->hasFile('img') && $request->file('img')->isValid()) {
-
-            // Armazena o arquivo da imagem na variável $requestImg
-            $requestImg = $request->img;
-
-            // Obtém a extensão do arquivo da imagem
-            $extension = $requestImg->extension();
-
-            // Gera um nome único para a imagem utilizando a função md5 e a timestamp atual
-            $imgName = md5($requestImg->getClientOriginalName() . strtotime("now")) . "." . $extension;
-
-            // Move a imagem para a pasta pública 'img/cards' com o novo nome gerado
-            $request->img->move(public_path('img/cards'), $imgName);
-
-            // Atribui o novo nome da imagem à propriedade 'img' do modelo Card
-            $card->img = $imgName;
+        // Upload de imagem
+        if ($request->hasFile('img') && $request->file('img')->isValid()) {
+            $requestImg = $request->img; // Armazena o arquivo da imagem
+            $extension = $requestImg->extension(); // Obtém a extensão do arquivo
+            $imgName = md5($requestImg->getClientOriginalName() . strtotime("now")) . "." . $extension; // Gera um nome único
+            $request->img->move(public_path('img/cards'), $imgName); // Move a imagem para a pasta pública
+            $card->img = $imgName; // Define o nome da imagem no card
         }
-        
-        // Salva o card no banco de dados
-        $card->save();
 
-        // Retorna a view 'adm/list'
-        return redirect('/cards')->with('success', 'Card Cadastrado com sucesso');
+        $card->save(); // Salva o card no banco de dados
 
-    }//Fim da store
+        return redirect('/cards')->with('success', 'Card cadastrado com sucesso'); // Redireciona com uma mensagem de sucesso
+    }
 
-    public function destroy($id) {
-        // Encontra o card no banco de dados ou falha se não encontrar
-        $card = Card::findOrFail($id);
-    
-        // Exclui a imagem associada ao card se ela existir
+    // Exclui um card do banco de dados
+    public function destroy($id)
+    {
+        $card = Card::findOrFail($id); // Encontra o card pelo ID
+
+        // Verifica se o card tem uma imagem associada e a exclui
         if ($card->img) {
-            // Monta o caminho completo para o arquivo de imagem
-            $imagePath = public_path('img/cards/' . $card->img);
-    
-            // Verifica se o arquivo existe e então exclui
+            $imagePath = public_path('img/cards/' . $card->img); // Caminho completo da imagem
             if (file_exists($imagePath)) {
-                unlink($imagePath); // Exclui o arquivo
+                unlink($imagePath); // Exclui o arquivo de imagem
             }
         }
-    
-        // Exclui o card do banco de dados
-        $card->delete();
-    
-        // Redireciona para a página dos cards
-        return redirect('/cards');
-    }//Fim do destroy
-    
 
-    
-    //Função show - Mostra a tela para atualizar os dados do card já cadastrado
-    public function show($id) {
+        $card->delete(); // Exclui o card do banco de dados
 
-        // findOrFail - Procure esses dados no Banco de Dados, se não achar, de erro/falha 
-        // Retornar o tipo do Banco de Dados
-        $card = Card::findOrFail($id);
-
-        // Retorna a view form com os dados do card encontrado no Banco de Dados
-        return view('adm/form', ["card"=>$card]);
-
-    }//Fim do show
-
-    
-    //Função edit - Edita os dados que já vieram cadastrados nas inputs pelo método show
-    public function edit($id) {
-        $card = Card::findOrFail($id);
-        return view('adm/edit', compact('card'));
+        return redirect('/cards'); // Redireciona para a página dos cards
     }
-    
-    public function update(Request $request, $id) {
-        $card = Card::findOrFail($id);
+
+    // Mostra a tela de edição para um card específico
+    public function show($id)
+    {
+        $card = Card::findOrFail($id); // Encontra o card pelo ID
+        return view('adm/form', ["card" => $card]); // Retorna a view com o card encontrado
+    }
+
+    // Edita os dados de um card existente
+    public function edit($id)
+    {
+        $card = Card::findOrFail($id); // Encontra o card pelo ID
+        return view('adm/edit', compact('card')); // Retorna a view de edição com o card
+    }
+
+    // Atualiza os dados de um card existente no banco de dados
+    public function update(Request $request, $id)
+    {
+        $card = Card::findOrFail($id); // Encontra o card pelo ID
+
+        // Atualiza os atributos do card com os novos valores do formulário
         $card->name = $request->name;
         $card->date = $request->date;
         $card->local = $request->local;
-        $card->ticket_link = $request->ticket_link; // Atualiza o link
-        
-        // Verifica se foi enviado um novo arquivo de imagem
-        if ($request->hasFile('img') && $request->file('img')->isValid()) {
-            // Processo de upload de imagem (mesmo processo que você já tem)
-        }
-    
-        $card->save();
-    
-        return redirect('/cards')->with('success', 'Card atualizado com sucesso');
-    }//Fim do Edit
+        $card->ticket_link = $request->ticket_link; // Atualiza o link de ingressos
 
-    public function updateVisibility(Request $request, $id) {
-        // Busca o card pelo ID
-        $card = Card::findOrFail($id);
-        
-        // Define o valor do campo 'visible' baseado no valor do checkbox
-        $card->visible = $request->has('visible');
-        
-        // Salva as mudanças no banco de dados
-        $card->save();
-        
-        // Redireciona de volta para a listagem de cards
-        return redirect('/cards')->with('success', 'Visibilidade do card atualizada com sucesso');
+        // Verifica se foi enviada uma nova imagem e a processa
+        if ($request->hasFile('img') && $request->file('img')->isValid()) {
+            // Exclui a imagem antiga, se existir
+            if ($card->img) {
+                $imagePath = public_path('img/cards/' . $card->img);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath); // Exclui o arquivo de imagem antigo
+                }
+            }
+
+            // Processo de upload de imagem
+            $requestImg = $request->img;
+            $extension = $requestImg->extension();
+            $imgName = md5($requestImg->getClientOriginalName() . strtotime("now")) . "." . $extension;
+            $request->img->move(public_path('img/cards'), $imgName);
+            $card->img = $imgName; // Atualiza o nome da imagem no card
+        }
+
+        $card->save(); // Salva as alterações no banco de dados
+
+        return redirect('/cards')->with('success', 'Card atualizado com sucesso');
     }
 
-}//Fim da classe
+
+    // Atualiza a visibilidade de um card
+    public function updateVisibility(Request $request, $id)
+    {
+        $card = Card::findOrFail($id); // Encontra o card pelo ID
+        $card->visible = $request->has('visible'); // Atualiza a visibilidade do card
+        $card->save(); // Salva as mudanças no banco de dados
+
+        return redirect('/cards')->with('success', 'Visibilidade do card atualizada com sucesso'); // Redireciona com uma mensagem de sucesso
+    }
+}
