@@ -1,37 +1,60 @@
 <?php
-// app/Http/Controllers/AuthController.php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 use App\Models\Adm;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
+    /**
+     * Exibe o formulário de login.
+     *
+     * @return \Illuminate\View\View
+     */
     public function showLoginForm()
     {
-        return view('auth.login');
+        return view('auth.login'); // Retorna a view do formulário de login
     }
 
+    /**
+     * Processa o login do administrador.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function login(Request $request)
-{
-    $credentials = $request->only('username', 'password');
+    {
+        // Recebe as credenciais (usuário e senha) do request
+        $credentials = $request->only('username', 'password');
 
-    if (Auth::guard('adm')->attempt($credentials)) {
-        // Autenticado com sucesso
-        return redirect()->intended('/cards'); // ou a rota desejada
+        // Tenta autenticar o administrador com as credenciais fornecidas
+        if (Auth::guard('adm')->attempt($credentials)) {
+            // Se a autenticação for bem-sucedida, redireciona para a rota dos cards
+            return redirect()->intended('/cards');
+        }
+
+        // Se a autenticação falhar, retorna ao login com uma mensagem de erro
+        return redirect('login')->withErrors(['login' => 'Credenciais inválidas']);
     }
 
-    // Falha na autenticação
-    return redirect('login')->withErrors(['login' => 'Credenciais inválidas']);
-}
+    /**
+     * Faz o logout do administrador.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logout(Request $request)
+    {
+        // Faz o logout do administrador
+        Auth::guard('adm')->logout();
 
-public function logout(Request $request)
-{
-    Auth::guard('adm')->logout();
+        // Invalida a sessão atual e gera um novo token CSRF
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    return redirect('/login'); // Redirecione para a página de login ou qualquer outra página desejada
-}
+        // Redireciona para a página de login
+        return redirect('/');
+    }
 }
