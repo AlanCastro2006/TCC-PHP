@@ -55,6 +55,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         // Redireciona para a página de login
-        return redirect('/login');
+        return redirect('/');
     }
 }
