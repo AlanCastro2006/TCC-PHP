@@ -167,10 +167,13 @@
         </div>
     </div>
 </div>
-<!-- Em uma das suas views, por exemplo, layout.blade.php -->
-<form action="{{ route('logout') }}" method="POST">
+<!-- Logout  -->
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
     @csrf
-    <button type="submit" class="btn btn-danger">Logout</button>
 </form>
 
+<a href="{{ route('logout') }}"
+    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+    Logout
+</a>
 @endsection

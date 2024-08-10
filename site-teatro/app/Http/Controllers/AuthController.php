@@ -25,12 +25,13 @@ class AuthController extends Controller
     return redirect('login')->withErrors(['login' => 'Credenciais inválidas']);
 }
 
-    public function logout(Request $request)
-    {
-        // Remove a variável de sessão que indica que o usuário está autenticado
-        $request->session()->forget('authenticated');
+public function logout(Request $request)
+{
+    Auth::guard('adm')->logout();
 
-        // Redireciona para a página de login
-        return redirect()->route('login');
-    }
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/login'); // Redirecione para a página de login ou qualquer outra página desejada
+}
 }

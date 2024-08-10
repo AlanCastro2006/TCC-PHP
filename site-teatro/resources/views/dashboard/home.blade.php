@@ -12,6 +12,9 @@
                 <li class="breadcrumb-item"><a href="/sobre">Sobre</a></li>
                 <li class="breadcrumb-item"><a href="/seu-projeto">Seu projeto</a></li>
                 <li class="breadcrumb-item"><a href="/contatos">Contatos</a></li>
+                @if(auth()->guard('adm')->check())
+                <li class="breadcrumb-item"><a href="/cards">Adicionar Cards</a></li>
+                @endif
             </ol>
         </nav>
     </div>
