@@ -21,7 +21,7 @@ class Card extends Model
      * Isso ajuda a proteger contra ataques de injeção de massa, permitindo
      * apenas os campos especificados serem preenchidos via requests.
      */
-    protected $fillable = ['name', 'date', 'local', 'img', 'visible', 'ticket_link'];
+    protected $fillable = ['name', 'date', 'local', 'img', 'visible', 'ticket_link', 'classification', 'description', 'duration', 'season_start', 'season_end', 'days'];
 
     /** 
      * Define o tipo do atributo 'visible' como booleano.
@@ -30,5 +30,6 @@ class Card extends Model
      */
     protected $casts = [
         'visible' => 'boolean',
+        'days' => 'array',
     ];
 }

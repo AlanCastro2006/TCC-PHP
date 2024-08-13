@@ -38,10 +38,6 @@
                                     <label for="floatingInput">Nome</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="date" class="form-control" name="date" id="date" placeholder="Data" value="{{ old('date') }}">
-                                    <label for="floatingInput">Data</label>
-                                </div>
-                                <div class="form-floating mb-3">
                                     <input type="text" class="form-control" name="local" id="local" placeholder="Local" value="{{ old('local') }}">
                                     <label for="floatingInput">Local</label>
                                 </div>
@@ -52,6 +48,42 @@
                                 <div class="form-floating mb-3">
                                     <input type="url" class="form-control" name="ticket_link" id="ticket_link" placeholder="Link para compra de ingressos" value="{{ old('ticket_link') }}">
                                     <label for="floatingInput">Link para compra de ingressos</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <select class="form-select" name="classification" id="classification">
+                                        <option value="Livre" {{ old('classification') == 'Livre' ? 'selected' : '' }}>Livre</option>
+                                        <option value="10" {{ old('classification') == '10' ? 'selected' : '' }}>10</option>
+                                        <option value="12" {{ old('classification') == '12' ? 'selected' : '' }}>12</option>
+                                        <option value="14" {{ old('classification') == '14' ? 'selected' : '' }}>14</option>
+                                        <option value="16" {{ old('classification') == '16' ? 'selected' : '' }}>16</option>
+                                        <option value="18" {{ old('classification') == '18' ? 'selected' : '' }}>18</option>
+                                    </select>
+                                    <label for="classification">Classificação</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control" name="description" id="description" placeholder="Descrição">{{ old('description', $card->description ?? '') }}</textarea>
+                                    <label for="description">Descrição</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="duration" id="duration" placeholder="Duração" value="{{ old('duration', $card->duration ?? '') }}">
+                                    <label for="duration">Duração</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="season" id="season" placeholder="Temporada" value="{{ old('season', $card->season ?? '') }}">
+                                    <label for="season">Temporada</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="days">Dias da Semana</label>
+                                    <select name="days[]" id="days" class="form-control" multiple>
+                                        <option value="domingo" {{ in_array('domingo', $daysArray) ? 'selected' : '' }}>Domingo</option>
+                                        <option value="segunda" {{ in_array('segunda', $daysArray) ? 'selected' : '' }}>Segunda</option>
+                                        <option value="terça" {{ in_array('terça', $daysArray) ? 'selected' : '' }}>Terça</option>
+                                        <option value="quarta" {{ in_array('quarta', $daysArray) ? 'selected' : '' }}>Quarta</option>
+                                        <option value="quinta" {{ in_array('quinta', $daysArray) ? 'selected' : '' }}>Quinta</option>
+                                        <option value="sexta" {{ in_array('sexta', $daysArray) ? 'selected' : '' }}>Sexta</option>
+                                        <option value="sabado" {{ in_array('sabado', $daysArray) ? 'selected' : '' }}>Sábado</option>
+                                    </select>
+                                    <small class="form-text text-muted">Segure Ctrl (ou Cmd no Mac) para selecionar múltiplos dias.</small>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -73,7 +105,6 @@
                         <thead>
                             <tr>
                                 <th scope="col">Nome</th>
-                                <th scope="col">Data</th>
                                 <th scope="col">Local</th>
                                 <th scope="col">Img</th>
                                 <th scope="col">Visibilidade</th>
@@ -84,7 +115,6 @@
                             @forelse($cards as $card)
                                 <tr>
                                     <td>{{ $card->name }}</td>
-                                    <td>{{ $card->date }}</td>
                                     <td>{{ $card->local }}</td>
                                     <td>{{ $card->img }}</td>
                                     <td>
@@ -122,10 +152,6 @@
                                                                 <label for="floatingInput">Nome</label>
                                                             </div>
                                                             <div class="form-floating mb-3">
-                                                                <input type="date" class="form-control" name="date" id="date{{ $card->id }}" placeholder="Data" value="{{ $card->date }}">
-                                                                <label for="floatingInput">Data</label>
-                                                            </div>
-                                                            <div class="form-floating mb-3">
                                                                 <input type="text" class="form-control" name="local" id="local{{ $card->id }}" placeholder="Local" value="{{ $card->local }}">
                                                                 <label for="floatingInput">Local</label>
                                                             </div>
@@ -136,6 +162,39 @@
                                                             <div class="form-floating mb-3">
                                                                 <input type="url" class="form-control" name="ticket_link" id="ticket_link" placeholder="Link para compra de ingressos" value="{{ $card->ticket_link }}">
                                                                 <label for="floatingInput">Link para compra de ingressos</label>
+                                                            </div>
+                                                            <div class="form-floating mb-3">
+                                                                <select class="form-select" name="classification" id="classification{{ $card->id }}">
+                                                                    <option value="Livre" {{ $card->classification == 'Livre' ? 'selected' : '' }}>Livre</option>
+                                                                    <option value="10" {{ $card->classification == '10' ? 'selected' : '' }}>10</option>
+                                                                    <option value="12" {{ $card->classification == '12' ? 'selected' : '' }}>12</option>
+                                                                    <option value="14" {{ $card->classification == '14' ? 'selected' : '' }}>14</option>
+                                                                    <option value="16" {{ $card->classification == '16' ? 'selected' : '' }}>16</option>
+                                                                    <option value="18" {{ $card->classification == '18' ? 'selected' : '' }}>18</option>
+                                                                </select>
+                                                                <label for="classification">Classificação</label>
+                                                            </div>
+                                                            <div class="form-floating mb-3">
+                                                                <textarea class="form-control" name="description" id="description" placeholder="Descrição">{{ $card->description  }}</textarea>
+                                                                <label for="description">Descrição</label>
+                                                            </div>
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control" name="duration" id="duration" placeholder="Duração" value="{{ $card->duration }}">
+                                                                <label for="duration">Duração</label>
+                                                            </div>
+                                                            <div class="form-group">
+    <label for="season">Temporada</label>
+    <input type="text" name="season" id="season" class="form-control" value="{{ old('season', $card->season) }}" placeholder="Selecione o período">
+</div>
+                                                            <div class="form-group">
+                        <label for="days">Dias da Semana</label>
+                        <select name="days[]" id="days{{ $card->id }}" class="form-control" multiple>
+                            @foreach(['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sabado'] as $day)
+                            <option value="{{ $day }}" {{ is_array($card->days) && in_array($day, $card->days) ? 'selected' : '' }}>
+                            {{ ucfirst($day) }}
+            </option>
+        @endforeach
+                        </select>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -176,4 +235,5 @@
     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
     Logout
 </a>
+
 @endsection

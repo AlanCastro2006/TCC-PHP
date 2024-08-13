@@ -21,7 +21,6 @@ return new class extends Migration
         Schema::create('cards', function (Blueprint $table) {
             $table->id(); // Coluna 'id' do tipo big integer auto-incrementável
             $table->string('name'); // Coluna 'name' do tipo string
-            $table->string('date'); // Coluna 'date' do tipo string
             $table->string('local'); // Coluna 'local' do tipo string
             $table->timestamps(); // Colunas 'created_at' e 'updated_at' para rastreamento de criação e atualização
         });

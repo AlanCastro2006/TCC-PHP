@@ -4,8 +4,9 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AuthController;
 
-//Rota Tela Inicial - Home
+//Rotas Tela Inicial - Home
 Route::get('/', [CardController::class, 'showHomePage']);
+Route::get('/cards/{id}/details', [CardController::class, 'show'])->name('cards.details');
 
 //Rotas para o envio de email
 Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');

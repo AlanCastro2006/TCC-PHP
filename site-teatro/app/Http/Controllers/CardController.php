@@ -18,19 +18,49 @@ class CardController extends Controller
     public function index()
     {
         $cards = Card::all(); // Seleciona todos os cards
-        return view('adm/list', ['cards' => $cards]); // Retorna a view com os cards
+        return view('adm/list', ['cards' => $cards, 'daysArray' => $card->days ?? [],]); // Retorna a view com os cards
     }
 
     // Armazena um novo card no banco de dados
     public function store(Request $request)
     {
-        $card = new Card(); // Cria uma nova instância de Card
+        
+
+        // Validação dos dados
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'local' => 'required|string|max:255',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'ticket_link' => 'nullable|url',
+            'classification' => 'required|string',
+            'description' => 'nullable|string',
+            'duration' => 'nullable|string',
+            'season' => 'required|string',
+            'days' => 'array|in:domingo,segunda,terça,quarta,quinta,sexta,sabado', // Validação para days
+        ]);
+
+            // Separar o intervalo de datas
+    $season = explode(' to ', $request->input('season'));
+    $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
+    $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
+
+    $card = new Card(); // Cria uma nova instância de Card
+
+        // Preparação dos dados
+        $data = $request->all();
+        $data['days'] = $request->input('days', []);
 
         // Define os atributos do card com os valores do formulário
         $card->name = $request->name;
-        $card->date = $request->date;
+        $card->season_start = $season_start;
+        $card->season_end = $season_end;
+        $card->days = implode(',', $request->days ?? []);//Converte o array para string
         $card->local = $request->local;
         $card->ticket_link = $request->ticket_link; // Adiciona o link de ingressos
+        $card->classification = $request->classification;
+        $card->description = $request->description;
+        $card->duration = $request->duration;
+        
 
         // Upload de imagem
         if ($request->hasFile('img') && $request->file('img')->isValid()) {
@@ -64,30 +94,67 @@ class CardController extends Controller
         return redirect('/cards'); // Redireciona para a página dos cards
     }
 
-    // Mostra a tela de edição para um card específico
+    //Mostra a tela específica do card selecionado
     public function show($id)
     {
-        $card = Card::findOrFail($id); // Encontra o card pelo ID
-        return view('adm/form', ["card" => $card]); // Retorna a view com o card encontrado
+        $card = Card::findOrFail($id); // Encontra o card ou lança um erro 404 se não for encontrado
+
+        // Converte a string de dias em um array para exibição
+        $daysArray = explode(',', $card->days);
+
+        return view('dashboard.details', compact('card', 'daysArray'));
     }
+    
 
     // Edita os dados de um card existente
     public function edit($id)
     {
         $card = Card::findOrFail($id); // Encontra o card pelo ID
-        return view('adm/edit', compact('card')); // Retorna a view de edição com o card
+
+        // Certifique-se de que 'days' é um array
+        $card->days = is_string($card->days) ? explode(',', $card->days) : $card->days;
+
+        dd($card->days); // Verifique se isso exibe um array
+
+        return view('adm/edit', ['card' => $card]); // Retorna a view de edição com o card
     }
 
     // Atualiza os dados de um card existente no banco de dados
     public function update(Request $request, $id)
     {
+
+        // Separar o intervalo de datas
+    $season = explode(' to ', $request->input('season'));
+    $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
+    $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
+
+        
+
+        // Validação dos dados
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'local' => 'required|string|max:255',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'ticket_link' => 'nullable|url',
+            'classification' => 'required|string',
+            'description' => 'nullable|string',
+            'duration' => 'nullable|string',
+            'season' => 'required|string',
+            'days' => 'array|in:domingo,segunda,terça,quarta,quinta,sexta,sabado', // Validação para days
+        ]);
+
         $card = Card::findOrFail($id); // Encontra o card pelo ID
 
         // Atualiza os atributos do card com os novos valores do formulário
         $card->name = $request->name;
-        $card->date = $request->date;
+        $card->season_start = $request->season_start;
+        $card->season_end = $request->season_end;
+        $card->days = implode(',', $request->days ?? []);
         $card->local = $request->local;
         $card->ticket_link = $request->ticket_link; // Atualiza o link de ingressos
+        $card->classification = $request->classification;
+        $card->description = $request->description;
+        $card->duration = $request->duration;
 
         // Verifica se foi enviada uma nova imagem e a processa
         if ($request->hasFile('img') && $request->file('img')->isValid()) {

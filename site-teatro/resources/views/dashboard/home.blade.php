@@ -19,14 +19,6 @@
         </nav>
     </div>
 
-   <div id="search-container" class="col-md12">
-        <h1>Busque uma apresentação</h1>
-        <form action="">
-            <!--Campo de pesquisa-->
-            <input type="text" id="search" name="search" class="form-control" placeholder="Procurar...">
-        </form>
-   </div>
-
    <div id="cards-container" class="col-md-12">
         <h2>Próximas Apresentações</h2>
         <p>Veja as apresentações dos próximos dias</p>
@@ -39,9 +31,8 @@
                     <p class="card-date">{{ $card->date}}</p>
                     <p class="card-local">{{ $card->local}}</p>
                     <img src="{{ asset('img/cards/' . $card->img) }}" class="card-img-top" alt="{{ $card->name }}">
-                    @if($card->ticket_link)
-                    <a href="{{ $card->ticket_link }}" class="btn btn-primary" target="_blank">Comprar Ingressos</a>
-                @endif
+                    <!-- Botão para detalhes -->
+                    <a href="{{ route('cards.details', $card->id) }}" class="btn btn-info mt-3">Ver Detalhes</a>
                 </div>
             </div>
             @empty
