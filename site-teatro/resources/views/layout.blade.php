@@ -29,17 +29,6 @@
         @yield('content')
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-
-        <script>
-    flatpickr("#season", {
-        mode: "range",
-        dateFormat: "d/m/Y",
-        defaultDate: ["{{ \Carbon\Carbon::parse($card->season_start)->format('d/m/Y') }}", "{{ \Carbon\Carbon::parse($card->season_end)->format('d/m/Y') }}"]
-    });
-</script>
-
-
-
         <!-- Modal de Confirmação de Exclusão -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -83,6 +72,7 @@
     <footer>
         <p>Alan Castro Site-Teatro&copy; 2023</p>
     </footer>
+    @yield('scripts')
     </body>
 </html>
 

@@ -3,6 +3,7 @@
 @section('title', 'Cards Ativos')
 
 @section('content')
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8 mt-4">
@@ -236,4 +237,15 @@
     Logout
 </a>
 
+@stack('scripts')
+
+@endsection
+
+@section('scripts')
+<script>
+    flatpickr("#season", {
+        mode: "range",
+        dateFormat: "d/m/Y"
+    });
+</script>
 @endsection
