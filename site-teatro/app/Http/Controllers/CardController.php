@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Card; // Importa o model Card
+use Carbon\Carbon;
 
 class CardController extends Controller
 {
@@ -24,8 +25,6 @@ class CardController extends Controller
     // Armazena um novo card no banco de dados
     public function store(Request $request)
     {
-        
-
         // Validação dos dados
         $request->validate([
             'name' => 'required|string|max:255',
@@ -39,12 +38,12 @@ class CardController extends Controller
             'days' => 'array|in:domingo,segunda,terça,quarta,quinta,sexta,sabado', // Validação para days
         ]);
 
-            // Separar o intervalo de datas
-    $season = explode(' to ', $request->input('season'));
-    $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
-    $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
+        // Separar o intervalo de datas
+        $season = explode(' to ', $request->input('season'));
+        $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
+        $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
 
-    $card = new Card(); // Cria uma nova instância de Card
+        $card = new Card(); // Cria uma nova instância de Card
 
         // Preparação dos dados
         $data = $request->all();
@@ -124,11 +123,9 @@ class CardController extends Controller
     {
 
         // Separar o intervalo de datas
-    $season = explode(' to ', $request->input('season'));
-    $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
-    $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
-
-        
+        $season = explode(' to ', $request->input('season'));
+        $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
+        $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
 
         // Validação dos dados
         $request->validate([
@@ -147,8 +144,8 @@ class CardController extends Controller
 
         // Atualiza os atributos do card com os novos valores do formulário
         $card->name = $request->name;
-        $card->season_start = $request->season_start;
-        $card->season_end = $request->season_end;
+        $card->season_start = $season_start;
+        $card->season_end = $season_end;
         $card->days = implode(',', $request->days ?? []);
         $card->local = $request->local;
         $card->ticket_link = $request->ticket_link; // Atualiza o link de ingressos

@@ -11,7 +11,9 @@
     <p><strong>Descrição:</strong> {{ $card->description }}</p>
     <p><strong>Duração:</strong> {{ $card->duration }}</p>
     @if($card->season_start && $card->season_end)
-    Temporada: De {{ \Carbon\Carbon::parse($card->season_start)->format('d/m/Y') }} a {{ \Carbon\Carbon::parse($card->season_end)->format('d/m/Y') }}
+    <p><strong>Temporada:</strong> De {{ \Carbon\Carbon::parse($card->season_start)->format('d/m/Y') }} a {{ \Carbon\Carbon::parse($card->season_end)->format('d/m/Y') }}</p>
+@else
+    <p><strong>Temporada:</strong> Informação indisponível</p>
 @endif
     <p><strong>Dias da Semana:</strong> {{ implode(', ', $daysArray) }}</p>
 
