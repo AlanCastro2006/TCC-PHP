@@ -16,6 +16,21 @@
     <p><strong>Temporada:</strong> Informação indisponível</p>
 @endif
     <p><strong>Dias da Semana:</strong> {{ implode(', ', $daysArray) }}</p>
+    <p><strong>Texto:</strong> {{ $card->texto }}</p>
+    <p><strong>Elenco:</strong> {{ $card->elenco }}</p>
+    <p><strong>Direção:</strong> {{ $card->direcao }}</p>
+    <p><strong>Figurino:</strong> {{ $card->figurino }}</p>
+    <p><strong>Cenografia:</strong> {{ $card->cenografia }}</p>
+    <p><strong>Iluminação:</strong> {{ $card->iluminacao }}</p>
+    <p><strong>Sonorização:</strong> {{ $card->sonorizacao }}</p>
+    <p><strong>Produção:</strong> {{ $card->producao }}</p>
+    <p><strong>Costureira:</strong> {{ $card->costureira }}</p>
+    <p><strong>Assistente Cenográfico:</strong> {{ $card->assistente_cenografia }}</p>
+    <p><strong>Cenotécnico:</strong> {{ $card->cenotecnico }}</p>
+    <p><strong>Consultoria de Design:</strong> {{ $card->consultoria_design }}</p>
+    <p><strong>Co-Produção:</strong> {{ $card->co_producao }}</p>
+    <p><strong>Agradecimentos:</strong> {{ $card->agradecimentos }}</p>
+
 
 
     @if($card->ticket_link)

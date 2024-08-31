@@ -6,35 +6,46 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     * Este método é responsável por criar a tabela e seus campos no banco de dados.
-     * Migration é usada para criar e excluir tabelas (DDL).
-     * Model é usado para manipular os dados nas tabelas (DML).
-     * Certifique-se de que o MySQL está rodando (não é necessário ligar o Apache no XAMPP para migrações).
-     *
-     * @return void
-     */
     public function up()
     {
-        // Cria a tabela 'cards' com os seguintes campos
         Schema::create('cards', function (Blueprint $table) {
-            $table->id(); // Coluna 'id' do tipo big integer auto-incrementável
-            $table->string('name'); // Coluna 'name' do tipo string
-            $table->string('local'); // Coluna 'local' do tipo string
-            $table->timestamps(); // Colunas 'created_at' e 'updated_at' para rastreamento de criação e atualização
+            $table->id();
+            $table->string('name');
+            $table->string('local');
+            $table->timestamps();
+            $table->string('img')->default('default_image.jpg');
+            $table->boolean('visible')->default(true);
+            $table->string('ticket_link')->nullable();
+            $table->string('classification')->nullable();
+            $table->text('description')->nullable();
+            $table->string('duration')->nullable();
+            $table->string('season')->nullable();
+            $table->string('days')->nullable();
+            $table->date('season_start')->nullable();
+            $table->date('season_end')->nullable();
+            
+            // Novos campos obrigatórios
+            $table->string('texto'); // Autoria do texto ou adaptação
+            $table->string('elenco');
+            $table->string('direcao');
+            $table->string('figurino');
+            $table->string('cenografia');
+            $table->string('iluminacao');
+            $table->string('sonorizacao');
+            $table->string('producao');
+
+            // Campos opcionais
+            $table->string('costureira')->nullable();
+            $table->string('assistente_cenografia')->nullable();
+            $table->string('cenotecnico')->nullable();
+            $table->string('consultoria_design')->nullable();
+            $table->string('co_producao')->nullable();
+            $table->text('agradecimentos')->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     * Este método é responsável por reverter a migração, excluindo a tabela criada.
-     *
-     * @return void
-     */
     public function down()
     {
-        // Exclui a tabela 'cards' se ela existir
         Schema::dropIfExists('cards');
     }
 };

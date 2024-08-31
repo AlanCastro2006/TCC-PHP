@@ -86,6 +86,62 @@
                                     </select>
                                     <small class="form-text text-muted">Segure Ctrl (ou Cmd no Mac) para selecionar múltiplos dias.</small>
                                 </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="texto" id="texto" placeholder="Texto" value="{{ old('texto', $card->texto ?? '') }}">
+                                    <label for="texto">Texto(Autoria)</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="elenco" id="elenco" placeholder="Elenco" value="{{ old('elenco', $card->elenco ?? '') }}">
+                                    <label for="elenco">Elenco</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="direcao" id="direcao" placeholder="Direcao" value="{{ old('direcao', $card->direcao ?? '') }}">
+                                    <label for="direcao">Direção</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="figurino" id="figurino" placeholder="Figurino" value="{{ old('figurino', $card->figurino ?? '') }}">
+                                    <label for="figurino">Figurino</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="cenografia" id="cenografia" placeholder="Cenografia" value="{{ old('cenografia', $card->cenografia?? '') }}">
+                                    <label for="cenografia">Cenografia</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="iluminacao" id="iluminacao" placeholder="Iluminação" value="{{ old('iluminacao', $card->iluminacao ?? '') }}">
+                                    <label for="iliminacao">Iluminação</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="sonorizacao" id="sonorizacao" placeholder="Sonoriação" value="{{ old('sonorizacao', $card->sonorizacao ?? '') }}">
+                                    <label for="sonorizacao">Sonorização</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="producao" id="producao" placeholder="Produção" value="{{ old('producao', $card->producao ?? '') }}">
+                                    <label for="producao">Produção</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="costureira" id="costureira" placeholder="Costureira" value="{{ old('costureira', $card->costureira ?? '') }}">
+                                    <label for="costureira">Costureira</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="assistente_cenografia" id="assistente_cenografia" placeholder="Assistente_De_Cenografia" value="{{ old('assistente_cenografia', $card->assistente_cenografia ?? '') }}">
+                                    <label for="assistente_cenografia">Assistente de Cenografía</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="cenotecnico" id="cenotecnico" placeholder="Cenotécnico" value="{{ old('cenotecnico', $card->cenotecnico ?? '') }}">
+                                    <label for="cenotecnico">Cenotécnico</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="consultoria_design" id="consultoria_design" placeholder="Consultoria_Design" value="{{ old('consultoria_design', $card->consultoria_design ?? '') }}">
+                                    <label for="consultoria_design">Consultoria De Design</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="co_producao" id="co_producao" placeholder="Co_produção" value="{{ old('co_producao', $card->co_producao ?? '') }}">
+                                    <label for="co_producao">Co-produção</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="agradecimentos" id="agradecimentos" placeholder="Agradecimentos" value="{{ old('agradecimentos', $card->agradecimentos ?? '') }}">
+                                    <label for="agradecimentos">Agradecimentos</label>
+                                </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                                     <button type="submit" class="btn btn-primary">Salvar</button>
@@ -197,6 +253,62 @@
         @endforeach
                         </select>
                                                             </div>
+                                                            <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="texto" id="texto" placeholder="Texto" value="{{ $card->texto }}">
+                                    <label for="texto">Texto(Autoria)</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="elenco" id="elenco" placeholder="Elenco" value="{{ $card->elenco }}">
+                                    <label for="elenco">Elenco</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="direcao" id="direcao" placeholder="Direcao" value="{{ $card->direcao }}">
+                                    <label for="direcao">Direção</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="figurino" id="figurino" placeholder="Figurino" value="{{ $card->figurino }}">
+                                    <label for="figurino">Figurino</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="cenografia" id="cenografia" placeholder="Cenografia" value="{{ $card->cenografia }}">
+                                    <label for="cenografia">Cenografia</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="iluminacao" id="iluminacao" placeholder="Iluminação" value="{{ $card->iluminacao }}">
+                                    <label for="iliminacao">Iluminação</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="sonorizacao" id="sonorizacao" placeholder="Sonoriação" value="{{ $card->sonorizacao }}">
+                                    <label for="sonorizacao">Sonorização</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="producao" id="producao" placeholder="Produção" value="{{ $card->producao }}">
+                                    <label for="producao">Produção</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="costureira" id="costureira" placeholder="Costureira" value="{{ $card->costureira }}">
+                                    <label for="costureira">Costureira</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="assistente_cenografia" id="assistente_cenografia" placeholder="Assistente_De_Cenografia" value="{{ $card->assistente_cenografia }}">
+                                    <label for="assistente_cenografia">Assistente de Cenografía</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="cenotecnico" id="cenotecnico" placeholder="Cenotécnico" value="{{ $card->cenotecnico }}">
+                                    <label for="cenotecnico">Cenotécnico</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="consultoria_design" id="consultoria_design" placeholder="Consultoria_Design" value="{{ $card->consultoria_design }}">
+                                    <label for="consultoria_design">Consultoria De Design</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="co_producao" id="co_producao" placeholder="Co_produção" value="{{ $card->co_producao }}">
+                                    <label for="co_producao">Co-produção</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="agradecimentos" id="agradecimentos" placeholder="Agradecimentos" value="{{ $card->agradecimentos }}">
+                                    <label for="agradecimentos">Agradecimentos</label>
+                                </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                                                                 <button type="submit" class="btn btn-primary">Salvar</button>

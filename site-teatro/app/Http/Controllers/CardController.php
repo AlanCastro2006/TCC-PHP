@@ -22,58 +22,89 @@ class CardController extends Controller
         return view('adm/list', ['cards' => $cards, 'daysArray' => $card->days ?? [],]); // Retorna a view com os cards
     }
 
-    // Armazena um novo card no banco de dados
-    public function store(Request $request)
-    {
-        // Validação dos dados
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'local' => 'required|string|max:255',
-            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'ticket_link' => 'nullable|url',
-            'classification' => 'required|string',
-            'description' => 'nullable|string',
-            'duration' => 'nullable|string',
-            'season' => 'required|string',
-            'days' => 'array|in:domingo,segunda,terça,quarta,quinta,sexta,sabado', // Validação para days
-        ]);
+// Armazena um novo card no banco de dados
+public function store(Request $request)
+{
+    // Validação dos dados
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'local' => 'required|string|max:255',
+        'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'ticket_link' => 'nullable|url',
+        'classification' => 'required|string',
+        'description' => 'nullable|string',
+        'duration' => 'nullable|string',
+        'season' => 'required|string',
+        'days' => 'array|in:domingo,segunda,terça,quarta,quinta,sexta,sabado',
+        // Novos campos obrigatórios
+        'texto' => 'required|string|max:255',
+        'elenco' => 'required|string|max:255',
+        'direcao' => 'required|string|max:255',
+        'figurino' => 'required|string|max:255',
+        'cenografia' => 'required|string|max:255',
+        'iluminacao' => 'required|string|max:255',
+        'sonorizacao' => 'required|string|max:255',
+        'producao' => 'required|string|max:255',
+        // Novos campos opcionais
+        'costureira' => 'nullable|string|max:255',
+        'assistente_cenografia' => 'nullable|string|max:255',
+        'cenotecnico' => 'nullable|string|max:255',
+        'consultoria_design' => 'nullable|string|max:255',
+        'co_producao' => 'nullable|string|max:255',
+        'agradecimentos' => 'nullable|string'
+    ]);
 
-        // Separar o intervalo de datas
-        $season = explode(' to ', $request->input('season'));
-        $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
-        $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
+    // Separar o intervalo de datas
+    $season = explode(' to ', $request->input('season'));
+    $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
+    $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
 
-        $card = new Card(); // Cria uma nova instância de Card
+    $card = new Card();
 
-        // Preparação dos dados
-        $data = $request->all();
-        $data['days'] = $request->input('days', []);
+    // Preparação dos dados
+    $data = $request->all();
+    $data['days'] = $request->input('days', []);
 
-        // Define os atributos do card com os valores do formulário
-        $card->name = $request->name;
-        $card->season_start = $season_start;
-        $card->season_end = $season_end;
-        $card->days = implode(',', $request->days ?? []);//Converte o array para string
-        $card->local = $request->local;
-        $card->ticket_link = $request->ticket_link; // Adiciona o link de ingressos
-        $card->classification = $request->classification;
-        $card->description = $request->description;
-        $card->duration = $request->duration;
-        
+    // Atribuição dos dados ao objeto Card
+    $card->name = $request->name;
+    $card->season_start = $season_start;
+    $card->season_end = $season_end;
+    $card->days = implode(',', $request->days ?? []);
+    $card->local = $request->local;
+    $card->ticket_link = $request->ticket_link;
+    $card->classification = $request->classification;
+    $card->description = $request->description;
+    $card->duration = $request->duration;
+    // Atribuição dos novos campos
+    $card->texto = $request->texto;
+    $card->elenco = $request->elenco;
+    $card->direcao = $request->direcao;
+    $card->figurino = $request->figurino;
+    $card->cenografia = $request->cenografia;
+    $card->iluminacao = $request->iluminacao;
+    $card->sonorizacao = $request->sonorizacao;
+    $card->producao = $request->producao;
+    // Atribuição dos campos opcionais
+    $card->costureira = $request->costureira;
+    $card->assistente_cenografia = $request->assistente_cenografia;
+    $card->cenotecnico = $request->cenotecnico;
+    $card->consultoria_design = $request->consultoria_design;
+    $card->co_producao = $request->co_producao;
+    $card->agradecimentos = $request->agradecimentos;
 
-        // Upload de imagem
-        if ($request->hasFile('img') && $request->file('img')->isValid()) {
-            $requestImg = $request->img; // Armazena o arquivo da imagem
-            $extension = $requestImg->extension(); // Obtém a extensão do arquivo
-            $imgName = md5($requestImg->getClientOriginalName() . strtotime("now")) . "." . $extension; // Gera um nome único
-            $request->img->move(public_path('img/cards'), $imgName); // Move a imagem para a pasta pública
-            $card->img = $imgName; // Define o nome da imagem no card
-        }
-
-        $card->save(); // Salva o card no banco de dados
-
-        return redirect('/cards')->with('success', 'Card cadastrado com sucesso'); // Redireciona com uma mensagem de sucesso
+    // Upload de imagem
+    if ($request->hasFile('img') && $request->file('img')->isValid()) {
+        $requestImg = $request->img;
+        $extension = $requestImg->extension();
+        $imgName = md5($requestImg->getClientOriginalName() . strtotime("now")) . "." . $extension;
+        $request->img->move(public_path('img/cards'), $imgName);
+        $card->img = $imgName;
     }
+
+    $card->save(); // Salva o card no banco de dados
+
+    return redirect('/cards')->with('success', 'Card cadastrado com sucesso');
+}
 
     // Exclui um card do banco de dados
     public function destroy($id)
@@ -113,68 +144,97 @@ class CardController extends Controller
         // Certifique-se de que 'days' é um array
         $card->days = is_string($card->days) ? explode(',', $card->days) : $card->days;
 
-        dd($card->days); // Verifique se isso exibe um array
-
         return view('adm/edit', ['card' => $card]); // Retorna a view de edição com o card
     }
 
-    // Atualiza os dados de um card existente no banco de dados
-    public function update(Request $request, $id)
-    {
+// Atualiza os dados de um card existente no banco de dados
+public function update(Request $request, $id)
+{
+    // Separar o intervalo de datas
+    $season = explode(' to ', $request->input('season'));
+    $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
+    $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
 
-        // Separar o intervalo de datas
-        $season = explode(' to ', $request->input('season'));
-        $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
-        $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
+    // Validação dos dados
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'local' => 'required|string|max:255',
+        'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'ticket_link' => 'nullable|url',
+        'classification' => 'required|string',
+        'description' => 'nullable|string',
+        'duration' => 'nullable|string',
+        'season' => 'required|string',
+        'days' => 'array|in:domingo,segunda,terça,quarta,quinta,sexta,sabado',
+        // Novos campos obrigatórios
+        'texto' => 'required|string|max:255',
+        'elenco' => 'required|string|max:255',
+        'direcao' => 'required|string|max:255',
+        'figurino' => 'required|string|max:255',
+        'cenografia' => 'required|string|max:255',
+        'iluminacao' => 'required|string|max:255',
+        'sonorizacao' => 'required|string|max:255',
+        'producao' => 'required|string|max:255',
+        // Novos campos opcionais
+        'costureira' => 'nullable|string|max:255',
+        'assistente_cenografia' => 'nullable|string|max:255',
+        'cenotecnico' => 'nullable|string|max:255',
+        'consultoria_design' => 'nullable|string|max:255',
+        'co_producao' => 'nullable|string|max:255',
+        'agradecimentos' => 'nullable|string'
+    ]);
 
-        // Validação dos dados
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'local' => 'required|string|max:255',
-            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'ticket_link' => 'nullable|url',
-            'classification' => 'required|string',
-            'description' => 'nullable|string',
-            'duration' => 'nullable|string',
-            'season' => 'required|string',
-            'days' => 'array|in:domingo,segunda,terça,quarta,quinta,sexta,sabado', // Validação para days
-        ]);
+    $card = Card::findOrFail($id); // Encontra o card pelo ID
 
-        $card = Card::findOrFail($id); // Encontra o card pelo ID
+    // Atualiza os atributos do card com os novos valores do formulário
+    $card->name = $request->name;
+    $card->season_start = $season_start;
+    $card->season_end = $season_end;
+    $card->days = implode(',', $request->days ?? []);
+    $card->local = $request->local;
+    $card->ticket_link = $request->ticket_link;
+    $card->classification = $request->classification;
+    $card->description = $request->description;
+    $card->duration = $request->duration;
+    // Atualiza os novos campos
+    $card->texto = $request->texto;
+    $card->elenco = $request->elenco;
+    $card->direcao = $request->direcao;
+    $card->figurino = $request->figurino;
+    $card->cenografia = $request->cenografia;
+    $card->iluminacao = $request->iluminacao;
+    $card->sonorizacao = $request->sonorizacao;
+    $card->producao = $request->producao;
+    // Atualiza os campos opcionais
+    $card->costureira = $request->costureira;
+    $card->assistente_cenografia = $request->assistente_cenografia;
+    $card->cenotecnico = $request->cenotecnico;
+    $card->consultoria_design = $request->consultoria_design;
+    $card->co_producao = $request->co_producao;
+    $card->agradecimentos = $request->agradecimentos;
 
-        // Atualiza os atributos do card com os novos valores do formulário
-        $card->name = $request->name;
-        $card->season_start = $season_start;
-        $card->season_end = $season_end;
-        $card->days = implode(',', $request->days ?? []);
-        $card->local = $request->local;
-        $card->ticket_link = $request->ticket_link; // Atualiza o link de ingressos
-        $card->classification = $request->classification;
-        $card->description = $request->description;
-        $card->duration = $request->duration;
-
-        // Verifica se foi enviada uma nova imagem e a processa
-        if ($request->hasFile('img') && $request->file('img')->isValid()) {
-            // Exclui a imagem antiga, se existir
-            if ($card->img) {
-                $imagePath = public_path('img/cards/' . $card->img);
-                if (file_exists($imagePath)) {
-                    unlink($imagePath); // Exclui o arquivo de imagem antigo
-                }
+    // Verifica se foi enviada uma nova imagem e a processa
+    if ($request->hasFile('img') && $request->file('img')->isValid()) {
+        // Exclui a imagem antiga, se existir
+        if ($card->img) {
+            $imagePath = public_path('img/cards/' . $card->img);
+            if (file_exists($imagePath)) {
+                unlink($imagePath); // Exclui o arquivo de imagem antigo
             }
-
-            // Processo de upload de imagem
-            $requestImg = $request->img;
-            $extension = $requestImg->extension();
-            $imgName = md5($requestImg->getClientOriginalName() . strtotime("now")) . "." . $extension;
-            $request->img->move(public_path('img/cards'), $imgName);
-            $card->img = $imgName; // Atualiza o nome da imagem no card
         }
 
-        $card->save(); // Salva as alterações no banco de dados
-
-        return redirect('/cards')->with('success', 'Card atualizado com sucesso');
+        // Processo de upload de imagem
+        $requestImg = $request->img;
+        $extension = $requestImg->extension();
+        $imgName = md5($requestImg->getClientOriginalName() . strtotime("now")) . "." . $extension;
+        $request->img->move(public_path('img/cards'), $imgName);
+        $card->img = $imgName; // Atualiza o nome da imagem no card
     }
+
+    $card->save(); // Salva as alterações no banco de dados
+
+    return redirect('/cards')->with('success', 'Card atualizado com sucesso');
+}
 
 
     // Atualiza a visibilidade de um card
