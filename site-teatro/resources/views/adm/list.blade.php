@@ -35,15 +35,15 @@
                             <form action="/cards/new" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="name" id="name" placeholder="Nome" value="{{ old('name') }}">
+                                    <input type="text" class="form-control" required name="name" id="name" placeholder="Nome" value="{{ old('name') }}">
                                     <label for="floatingInput">Nome</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="file" class="form-control" name="img" id="img" placeholder="Imagem">
+                                    <input type="file" class="form-control" required name="img" id="img" placeholder="Imagem">
                                     <label for="floatingInput">Imagem</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="url" class="form-control" name="ticket_link" id="ticket_link" placeholder="Link para compra de ingressos" value="{{ old('ticket_link') }}">
+                                    <input type="url" class="form-control" required name="ticket_link" id="ticket_link" placeholder="Link para compra de ingressos" value="{{ old('ticket_link') }}">
                                     <label for="floatingInput">Link para compra de ingressos</label>
                                 </div>
                                 <div class="form-floating mb-3">
@@ -58,19 +58,19 @@
                                     <label for="classification">Classificação</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <textarea class="form-control" name="description" id="description" placeholder="Descrição">{{ old('description', $card->description ?? '') }}</textarea>
-                                    <label for="description">Descrição</label>
+                                    <textarea class="form-control" required name="description" id="description" placeholder="Descrição">{{ old('description', $card->description ?? '') }}</textarea>
+                                    <label for="description">Sinopse</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="duration" id="duration" placeholder="Duração" value="{{ old('duration', $card->duration ?? '') }}">
+                                    <input type="text" class="form-control" required name="duration" id="duration" placeholder="Duração" value="{{ old('duration', $card->duration ?? '') }}">
                                     <label for="duration">Duração</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="season" id="season" placeholder="Temporada" value="{{ old('season', $card->season ?? '') }}">
+                                    <input type="text" class="form-control" required name="season" id="season" placeholder="Temporada" value="{{ old('season', $card->season ?? '') }}">
                                     <label for="season">Temporada</label>
                                 </div>
                                 <div class="form-group">
-                                    <label for="days">Dias da Semana</label>
+                                    <label for="days" required >Dias da Semana</label>
                                     <select name="days[]" id="days" class="form-control" multiple>
                                         <option value="domingo" {{ in_array('domingo', $daysArray) ? 'selected' : '' }}>Domingo</option>
                                         <option value="segunda" {{ in_array('segunda', $daysArray) ? 'selected' : '' }}>Segunda</option>
@@ -83,35 +83,35 @@
                                     <small class="form-text text-muted">Segure Ctrl (ou Cmd no Mac) para selecionar múltiplos dias.</small>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="texto" id="texto" placeholder="Texto" value="{{ old('texto', $card->texto ?? '') }}">
+                                    <input type="text" class="form-control" required name="texto" id="texto" placeholder="Texto" value="{{ old('texto', $card->texto ?? '') }}">
                                     <label for="texto">Texto(Autoria)</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="elenco" id="elenco" placeholder="Elenco" value="{{ old('elenco', $card->elenco ?? '') }}">
+                                    <input type="text" class="form-control" required name="elenco" id="elenco" placeholder="Elenco" value="{{ old('elenco', $card->elenco ?? '') }}">
                                     <label for="elenco">Elenco</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="direcao" id="direcao" placeholder="Direcao" value="{{ old('direcao', $card->direcao ?? '') }}">
+                                    <input type="text" class="form-control" required name="direcao" id="direcao" placeholder="Direcao" value="{{ old('direcao', $card->direcao ?? '') }}">
                                     <label for="direcao">Direção</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="figurino" id="figurino" placeholder="Figurino" value="{{ old('figurino', $card->figurino ?? '') }}">
+                                    <input type="text" class="form-control" required name="figurino" id="figurino" placeholder="Figurino" value="{{ old('figurino', $card->figurino ?? '') }}">
                                     <label for="figurino">Figurino</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="cenografia" id="cenografia" placeholder="Cenografia" value="{{ old('cenografia', $card->cenografia?? '') }}">
+                                    <input type="text" class="form-control" required name="cenografia" id="cenografia" placeholder="Cenografia" value="{{ old('cenografia', $card->cenografia?? '') }}">
                                     <label for="cenografia">Cenografia</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="iluminacao" id="iluminacao" placeholder="Iluminação" value="{{ old('iluminacao', $card->iluminacao ?? '') }}">
+                                    <input type="text" class="form-control" required name="iluminacao" id="iluminacao" placeholder="Iluminação" value="{{ old('iluminacao', $card->iluminacao ?? '') }}">
                                     <label for="iliminacao">Iluminação</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="sonorizacao" id="sonorizacao" placeholder="Sonoriação" value="{{ old('sonorizacao', $card->sonorizacao ?? '') }}">
+                                    <input type="text" class="form-control" required name="sonorizacao" id="sonorizacao" placeholder="Sonoriação" value="{{ old('sonorizacao', $card->sonorizacao ?? '') }}">
                                     <label for="sonorizacao">Sonorização</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="producao" id="producao" placeholder="Produção" value="{{ old('producao', $card->producao ?? '') }}">
+                                    <input type="text" class="form-control" required name="producao" id="producao" placeholder="Produção" value="{{ old('producao', $card->producao ?? '') }}">
                                     <label for="producao">Produção</label>
                                 </div>
                                 <div class="form-floating mb-3">
