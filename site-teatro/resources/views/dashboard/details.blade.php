@@ -6,7 +6,6 @@
 <div class="container mt-5">
     <h1>{{ $card->name }}</h1>
     <img src="{{ asset('img/cards/' . $card->img) }}" alt="{{ $card->name }}" class="img-fluid">
-    <p><strong>Local:</strong> {{ $card->local }}</p>
     <p><strong>Classificação:</strong> {{ $card->classification }}</p>
     <p><strong>Descrição:</strong> {{ $card->description }}</p>
     <p><strong>Duração:</strong> {{ $card->duration }}</p>

@@ -24,7 +24,6 @@ class Card extends Model
     // Define os campos que podem ser preenchidos em massa
     protected $fillable = [
         'name',
-        'local',
         'img',
         'visible',
         'ticket_link',

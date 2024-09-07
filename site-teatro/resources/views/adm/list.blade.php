@@ -39,10 +39,6 @@
                                     <label for="floatingInput">Nome</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="local" id="local" placeholder="Local" value="{{ old('local') }}">
-                                    <label for="floatingInput">Local</label>
-                                </div>
-                                <div class="form-floating mb-3">
                                     <input type="file" class="form-control" name="img" id="img" placeholder="Imagem">
                                     <label for="floatingInput">Imagem</label>
                                 </div>
@@ -162,7 +158,6 @@
                         <thead>
                             <tr>
                                 <th scope="col">Nome</th>
-                                <th scope="col">Local</th>
                                 <th scope="col">Img</th>
                                 <th scope="col">Visibilidade</th>
                                 <th scope="col">Ações</th>
@@ -172,7 +167,6 @@
                             @forelse($cards as $card)
                                 <tr>
                                     <td>{{ $card->name }}</td>
-                                    <td>{{ $card->local }}</td>
                                     <td>{{ $card->img }}</td>
                                     <td>
                                         <!-- Formulário para atualizar a visibilidade -->
@@ -207,10 +201,6 @@
                                                             <div class="form-floating mb-3">
                                                                 <input type="text" class="form-control" name="name" id="name{{ $card->id }}" placeholder="Nome" value="{{ $card->name }}">
                                                                 <label for="floatingInput">Nome</label>
-                                                            </div>
-                                                            <div class="form-floating mb-3">
-                                                                <input type="text" class="form-control" name="local" id="local{{ $card->id }}" placeholder="Local" value="{{ $card->local }}">
-                                                                <label for="floatingInput">Local</label>
                                                             </div>
                                                             <div class="form-floating mb-3">
                                                                 <input type="file" class="form-control" name="img" id="img{{ $card->id }}" placeholder="Imagem">

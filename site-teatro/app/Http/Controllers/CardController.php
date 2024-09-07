@@ -28,7 +28,6 @@ public function store(Request $request)
     // Validação dos dados
     $request->validate([
         'name' => 'required|string|max:255',
-        'local' => 'required|string|max:255',
         'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'ticket_link' => 'nullable|url',
         'classification' => 'required|string',
@@ -70,7 +69,6 @@ public function store(Request $request)
     $card->season_start = $season_start;
     $card->season_end = $season_end;
     $card->days = implode(',', $request->days ?? []);
-    $card->local = $request->local;
     $card->ticket_link = $request->ticket_link;
     $card->classification = $request->classification;
     $card->description = $request->description;
@@ -158,7 +156,6 @@ public function update(Request $request, $id)
     // Validação dos dados
     $request->validate([
         'name' => 'required|string|max:255',
-        'local' => 'required|string|max:255',
         'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'ticket_link' => 'nullable|url',
         'classification' => 'required|string',
@@ -191,7 +188,6 @@ public function update(Request $request, $id)
     $card->season_start = $season_start;
     $card->season_end = $season_end;
     $card->days = implode(',', $request->days ?? []);
-    $card->local = $request->local;
     $card->ticket_link = $request->ticket_link;
     $card->classification = $request->classification;
     $card->description = $request->description;
