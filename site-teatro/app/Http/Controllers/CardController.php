@@ -34,7 +34,7 @@ public function store(Request $request)
         'description' => 'nullable|string',
         'duration' => 'nullable|string',
         'season' => 'required|string',
-        'days' => 'array|in:domingo,segunda,terça,quarta,quinta,sexta,sabado',
+        'days' => 'required|array|min:1|in:domingo,segunda,terça,quarta,quinta,sexta,sabado',
         // Novos campos obrigatórios
         'texto' => 'required|string|max:255',
         'elenco' => 'required|string|max:255',
@@ -50,7 +50,10 @@ public function store(Request $request)
         'cenotecnico' => 'nullable|string|max:255',
         'consultoria_design' => 'nullable|string|max:255',
         'co_producao' => 'nullable|string|max:255',
-        'agradecimentos' => 'nullable|string'
+        'agradecimentos' => 'nullable|string',
+    ],[
+        'days.required' => 'Você deve selecionar pelo menos um dia da semana.',
+        'days.min' => 'Você deve selecionar pelo menos um dia da semana.',
     ]);
 
     // Separar o intervalo de datas

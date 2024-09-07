@@ -70,8 +70,8 @@
                                     <label for="season">Temporada</label>
                                 </div>
                                 <div class="form-group">
-                                    <label for="days" required >Dias da Semana</label>
-                                    <select name="days[]" id="days" class="form-control" multiple>
+                                    <label for="days" >Dias da Semana</label>
+                                    <select name="days[]" id="days" class="form-control" multiple required>
                                         <option value="domingo" {{ in_array('domingo', $daysArray) ? 'selected' : '' }}>Domingo</option>
                                         <option value="segunda" {{ in_array('segunda', $daysArray) ? 'selected' : '' }}>Segunda</option>
                                         <option value="terça" {{ in_array('terça', $daysArray) ? 'selected' : '' }}>Terça</option>
@@ -81,6 +81,9 @@
                                         <option value="sabado" {{ in_array('sabado', $daysArray) ? 'selected' : '' }}>Sábado</option>
                                     </select>
                                     <small class="form-text text-muted">Segure Ctrl (ou Cmd no Mac) para selecionar múltiplos dias.</small>
+                                    @error('days')
+        <div class="alert alert-danger">{{ $message }}</div>
+    @enderror
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" required name="texto" id="texto" placeholder="Texto" value="{{ old('texto', $card->texto ?? '') }}">
@@ -348,6 +351,16 @@
     flatpickr("#season", {
         mode: "range",
         dateFormat: "d/m/Y"
+    });
+
+    $(document).ready(function() {
+    $('#card-form').submit(function(e) {
+        var days = $('#days').val();
+        if (days.length === 0) {
+            alert('Você deve selecionar pelo menos um dia da semana.');
+            e.preventDefault();
+        }
+    });
     });
 </script>
 @endsection
