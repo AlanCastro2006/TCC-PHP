@@ -54,6 +54,8 @@ public function store(Request $request)
     ],[
         'days.required' => 'Você deve selecionar pelo menos um dia da semana.',
         'days.min' => 'Você deve selecionar pelo menos um dia da semana.',
+        'season.required' => 'O campo temporada é obrigatório.',
+        'season.date'     => 'O formato da data da temporada é inválido.'
     ]);
 
     // Separar o intervalo de datas

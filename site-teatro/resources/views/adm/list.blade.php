@@ -68,6 +68,9 @@
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" required name="season" id="season" placeholder="Temporada" value="{{ old('season', $card->season ?? '') }}">
                                     <label for="season">Temporada</label>
+                                    @error('season')
+        <div class="alert alert-danger">{{ $message }}</div>
+    @enderror
                                 </div>
                                 <div class="form-group">
                                     <label for="days" >Dias da Semana</label>
@@ -350,7 +353,18 @@
 <script>
     flatpickr("#season", {
         mode: "range",
-        dateFormat: "d/m/Y"
+        dateFormat: "d/m/Y",
+        onClose: function(selectedDates) {
+            if (!selectedDates.length) {
+                // Exibir mensagem de erro personalizada
+                alert('Por favor, selecione um período para a temporada.');
+            }else {
+                // Verificar se a temporada selecionada é válida para os dias da semana escolhidos
+                // (Exemplo: se a temporada for de verão, os dias da semana permitidos podem ser diferentes)
+                var selectedDays = $('#days').val();
+                // Lógica para verificar a compatibilidade entre a temporada e os dias da semana
+        }
+        }
     });
 
     $(document).ready(function() {
