@@ -35,8 +35,8 @@ public function store(Request $request)
         'description' => 'nullable|string',
         'duration' => 'nullable|string',
         'season' => 'required|string',
-        'days' => 'required|array|min:1|in:domingo,segunda,terça,quarta,quinta,sexta,sabado',
-        // Novos campos obrigatórios
+        'days' => 'required|array|min:1|in:domingo,segunda,terça,quarta,quinta,sexta,sábado',
+        'horarios' => 'required|array', // Certifica-se de que os horários estão presentes
         'texto' => 'required|string|max:255',
         'elenco' => 'required|string|max:255',
         'direcao' => 'required|string|max:255',
@@ -45,18 +45,12 @@ public function store(Request $request)
         'iluminacao' => 'required|string|max:255',
         'sonorizacao' => 'required|string|max:255',
         'producao' => 'required|string|max:255',
-        // Novos campos opcionais
         'costureira' => 'nullable|string|max:255',
         'assistente_cenografia' => 'nullable|string|max:255',
         'cenotecnico' => 'nullable|string|max:255',
         'consultoria_design' => 'nullable|string|max:255',
         'co_producao' => 'nullable|string|max:255',
         'agradecimentos' => 'nullable|string',
-    ],[
-        'days.required' => 'Você deve selecionar pelo menos um dia da semana.',
-        'days.min' => 'Você deve selecionar pelo menos um dia da semana.',
-        'season.required' => 'O campo temporada é obrigatório.',
-        'season.date' => 'O formato da data da temporada é inválido.'
     ]);
 
     // Separar o intervalo de datas
@@ -64,19 +58,16 @@ public function store(Request $request)
     $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
     $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
 
+    // Criação do card
     $card = new Card();
-
-    // Atribuição dos dados ao objeto Card
     $card->name = $request->name;
     $card->season_start = $season_start;
     $card->season_end = $season_end;
-    $card->days = implode(',', $request->days ?? []); // Salva os dias como uma string
+    $card->days = implode(',', $request->days ?? []); // Dias
     $card->ticket_link = $request->ticket_link;
     $card->classification = $request->classification;
     $card->description = $request->description;
     $card->duration = $request->duration;
-
-    // Atribuição dos novos campos
     $card->texto = $request->texto;
     $card->elenco = $request->elenco;
     $card->direcao = $request->direcao;
@@ -85,8 +76,6 @@ public function store(Request $request)
     $card->iluminacao = $request->iluminacao;
     $card->sonorizacao = $request->sonorizacao;
     $card->producao = $request->producao;
-
-    // Atribuição dos campos opcionais
     $card->costureira = $request->costureira;
     $card->assistente_cenografia = $request->assistente_cenografia;
     $card->cenotecnico = $request->cenotecnico;
@@ -105,28 +94,24 @@ public function store(Request $request)
 
     $card->save(); // Salva o card no banco de dados
 
-    // Salva os horários para cada dia
-    $horarios = $request->input('horarios', []); // Pega os horários enviados no request
-    if (!empty($horarios)) {
-        foreach ($horarios as $dia => $horas) {
-            if (is_array($horas)) {
-                foreach ($horas as $hora) {
-                    if (!empty($hora)) {
-                        // Salva o horário no banco (ou em outra lógica, dependendo da estrutura)
-                        // Exemplo, supondo que você tenha um modelo "CardHorario":
-                        CardHorario::create([
-                            'card_id' => $card->id,
-                            'dia' => $dia,
-                            'horario' => $hora
-                        ]);
-                    }
+    // Salvar dias e horários na tabela card_horarios
+    if ($request->has('horarios')) {
+        foreach ($request->horarios as $dia => $horarios) {
+            foreach ($horarios as $horario) {
+                if (!empty($horario)) {
+                    // Criar novo registro de horário
+                    $cardHorario = new CardHorario();
+                    $cardHorario->card_id = $card->id;
+                    $cardHorario->dia = $dia;
+                    $cardHorario->horario = $horario;
+                    $cardHorario->save();
                 }
             }
         }
     }
-
     return redirect('/cards')->with('success', 'Card cadastrado com sucesso');
 }
+
 
     // Exclui um card do banco de dados
     public function destroy($id)

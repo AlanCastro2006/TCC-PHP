@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('duration')->nullable();
             $table->string('season')->nullable();
             $table->string('days')->nullable();
-            $table->time('horarios')->nullable();
             $table->date('season_start')->nullable();
             $table->date('season_end')->nullable();
             

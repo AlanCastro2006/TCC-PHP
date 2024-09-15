@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHorariosTable extends Migration
+class CreateCardHorariosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class CreateHorariosTable extends Migration
     {
         Schema::create('card_horarios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('card_id')->constrained()->onDelete('cascade'); // Relaciona com o card e remove horários caso o card seja excluído
+            $table->foreignId('card_id')->constrained()->onDelete('cascade'); // Relaciona com o card
             $table->string('dia'); // Domingo, Segunda, etc.
             $table->time('horario'); // Horário específico
             $table->timestamps();

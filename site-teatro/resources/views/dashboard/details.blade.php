@@ -14,6 +14,17 @@
     @else
     <p><strong>Temporada:</strong> Informação indisponível</p>
     @endif
+        <!-- Exibição dos horários -->
+        @if($card->horarios->count() > 0)
+        <p><strong>Horários:</strong></p>
+        <ul>
+            @foreach($card->horarios as $horario)
+                <li>{{ $horario->dia }} - {{ \Carbon\Carbon::parse($horario->horario)->format('H:i') }}</li>
+            @endforeach
+        </ul>
+    @else
+        <p><strong>Horários:</strong> Não há horários cadastrados.</p>
+    @endif
     <p><strong>Dias da Semana:</strong> {{ implode(', ', $daysArray) }}</p>
     <p><strong>Texto:</strong> {{ $card->texto }}</p>
     <p><strong>Elenco:</strong> {{ $card->elenco }}</p>
@@ -41,6 +52,7 @@
     @if($card->agradecimentos)
     <p><strong>Agradecimentos:</strong> {{ $card->agradecimentos }}</p>
     @endif
+
 
 
 
