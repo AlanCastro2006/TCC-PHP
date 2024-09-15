@@ -111,30 +111,38 @@
                                                     </div>
 
                                                     <div class="mb-3">
+    {{-- Dias da semana --}}
+    @foreach(['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'] as $day)
+    <div class="form-check ms-2">
+        <input class="form-check-input checkbox-day" type="checkbox" value="{{ $day }}" id="check{{ $day }}" name="days[]" 
+            {{ in_array($day, $card->days ?? []) ? 'checked' : '' }}> {{-- Mantém o valor selecionado --}}
+        <label class="form-check-label" for="check{{ $day }}">{{ ucfirst($day) }}</label>
+    </div>
 
-                                                        {{-- Dias da semana --}}
-                                                        @foreach(['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'] as $dia)
-                                                        <div class="form-check ms-2">
-                                                            <input class="form-check-input checkbox-day" type="checkbox" value="{{ $dia }}" id="check{{ $dia }}" name="dias[]">
-                                                            <label class="form-check-label" for="check{{ $dia }}">{{ $dia }}</label>
-                                                        </div>
-                                                    
-                                                        <div id="horarios-{{ $dia }}" class="mt-2 ms-2 d-none">
-                                                            <div class="horario-wrapper mb-3">
-                                                                <div class="d-flex align-items-center mb-2">
-                                                                    <input type="time" class="form-control me-2" name="horarios[{{ $dia }}][]">
-                                                                    <button type="button" class="btn btn-danger btn-remover-horario">Remover</button>
-                                                                </div>
-                                                            </div>
-                                                    
-                                                            <button type="button" class="btn btn-danger btn-adicionar-horario d-flex align-items-center mb-3" data-dia="{{ $dia }}">
-                                                                <span class="ic--baseline-plus"></span>
-                                                                <span class="roboto-regular">Adicionar horário</span>
-                                                            </button>
-                                                        </div>
-                                                    @endforeach                                                    
+    <div id="horarios-{{ $day }}" class="mt-2 ms-2 {{ in_array($day, $card->days ?? []) ? '' : 'd-none' }}">
+        <div class="horario-wrapper mb-3">
+            @if(!empty($card->horarios[$day]))
+                @foreach($card->horarios[$day] as $horario)
+                <div class="d-flex align-items-center mb-2">
+                    <input type="time" class="form-control me-2" name="horarios[{{ $day }}][]" value="{{ $horario }}">
+                    <button type="button" class="btn btn-danger btn-remover-horario">Remover</button>
+                </div>
+                @endforeach
+            @else
+                <div class="d-flex align-items-center mb-2">
+                    <input type="time" class="form-control me-2" name="horarios[{{ $day }}][]">
+                    <button type="button" class="btn btn-danger btn-remover-horario">Remover</button>
+                </div>
+            @endif
+        </div>
 
-                                                    </div>
+        <button type="button" class="btn btn-danger btn-adicionar-horario d-flex align-items-center mb-3" data-dia="{{ $day }}">
+            <span class="ic--baseline-plus"></span>
+            <span class="roboto-regular">Adicionar horário</span>
+        </button>
+    </div>
+    @endforeach
+</div>
 
                                                 </div>
                                             </div>

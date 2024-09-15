@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Card extends Model
 {
-    use HasFactory;
+    public function horarios()
+    {
+        return $this->hasMany(CardHorario::class);
+    }
+    
 
     /**
      * Define o nome da tabela associada ao modelo.

@@ -13,6 +13,11 @@ return new class extends Migration
             $table->string('name');
             $table->timestamps();
             $table->string('img')->default('default_image.jpg');
+            $table->string('img1')->default('default_image1.jpg');
+            $table->string('img2')->default('default_image2.jpg');
+            $table->string('img3')->default('default_image3.jpg');
+            $table->string('img4')->default('default_image4.jpg');
+            $table->string('img5')->default('default_image5.jpg');
             $table->boolean('visible')->default(true);
             $table->string('ticket_link')->nullable();
             $table->string('classification')->nullable();
@@ -20,6 +25,7 @@ return new class extends Migration
             $table->string('duration')->nullable();
             $table->string('season')->nullable();
             $table->string('days')->nullable();
+            $table->time('horarios')->nullable();
             $table->date('season_start')->nullable();
             $table->date('season_end')->nullable();
             

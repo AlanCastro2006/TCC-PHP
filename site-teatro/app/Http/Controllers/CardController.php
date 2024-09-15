@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Card; // Importa o model Card
+use App\Models\CardHorario; // Importa o model Card
 use Carbon\Carbon;
 
 class CardController extends Controller
@@ -55,7 +56,7 @@ public function store(Request $request)
         'days.required' => 'Você deve selecionar pelo menos um dia da semana.',
         'days.min' => 'Você deve selecionar pelo menos um dia da semana.',
         'season.required' => 'O campo temporada é obrigatório.',
-        'season.date'     => 'O formato da data da temporada é inválido.'
+        'season.date' => 'O formato da data da temporada é inválido.'
     ]);
 
     // Separar o intervalo de datas
@@ -65,19 +66,16 @@ public function store(Request $request)
 
     $card = new Card();
 
-    // Preparação dos dados
-    $data = $request->all();
-    $data['days'] = $request->input('days', []);
-
     // Atribuição dos dados ao objeto Card
     $card->name = $request->name;
     $card->season_start = $season_start;
     $card->season_end = $season_end;
-    $card->days = implode(',', $request->days ?? []);
+    $card->days = implode(',', $request->days ?? []); // Salva os dias como uma string
     $card->ticket_link = $request->ticket_link;
     $card->classification = $request->classification;
     $card->description = $request->description;
     $card->duration = $request->duration;
+
     // Atribuição dos novos campos
     $card->texto = $request->texto;
     $card->elenco = $request->elenco;
@@ -87,6 +85,7 @@ public function store(Request $request)
     $card->iluminacao = $request->iluminacao;
     $card->sonorizacao = $request->sonorizacao;
     $card->producao = $request->producao;
+
     // Atribuição dos campos opcionais
     $card->costureira = $request->costureira;
     $card->assistente_cenografia = $request->assistente_cenografia;
@@ -105,6 +104,26 @@ public function store(Request $request)
     }
 
     $card->save(); // Salva o card no banco de dados
+
+    // Salva os horários para cada dia
+    $horarios = $request->input('horarios', []); // Pega os horários enviados no request
+    if (!empty($horarios)) {
+        foreach ($horarios as $dia => $horas) {
+            if (is_array($horas)) {
+                foreach ($horas as $hora) {
+                    if (!empty($hora)) {
+                        // Salva o horário no banco (ou em outra lógica, dependendo da estrutura)
+                        // Exemplo, supondo que você tenha um modelo "CardHorario":
+                        CardHorario::create([
+                            'card_id' => $card->id,
+                            'dia' => $dia,
+                            'horario' => $hora
+                        ]);
+                    }
+                }
+            }
+        }
+    }
 
     return redirect('/cards')->with('success', 'Card cadastrado com sucesso');
 }
