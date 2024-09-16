@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Card; // Importa o model Card
+use App\Models\Card;
+use App\Models\CardImage; // Importa o model Card
 use App\Models\CardHorario; // Importa o model Card
 use Carbon\Carbon;
 
@@ -24,12 +25,18 @@ class CardController extends Controller
     }
 
 // Armazena um novo card no banco de dados
+// Armazena um novo card no banco de dados
 public function store(Request $request)
 {
     // Validação dos dados
     $request->validate([
         'name' => 'required|string|max:255',
         'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'img1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',          // Imagens adicionais
+        'img2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'img3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'img4' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'img5' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'ticket_link' => 'nullable|url',
         'classification' => 'required|string',
         'description' => 'nullable|string',
@@ -83,16 +90,24 @@ public function store(Request $request)
     $card->co_producao = $request->co_producao;
     $card->agradecimentos = $request->agradecimentos;
 
-    // Upload de imagem
-    if ($request->hasFile('img') && $request->file('img')->isValid()) {
-        $requestImg = $request->img;
+    $card->save(); // Salva o card no banco de dados
+
+    // Upload de imagem da capa e imagens adicionais
+$images = ['img', 'img1', 'img2', 'img3', 'img4', 'img5'];
+foreach ($images as $image) {
+    if ($request->hasFile($image) && $request->file($image)->isValid()) {
+        $requestImg = $request->file($image);
         $extension = $requestImg->extension();
         $imgName = md5($requestImg->getClientOriginalName() . strtotime("now")) . "." . $extension;
-        $request->img->move(public_path('img/cards'), $imgName);
-        $card->img = $imgName;
-    }
+        $requestImg->move(public_path('img/cards'), $imgName);
 
-    $card->save(); // Salva o card no banco de dados
+        // Salvar a imagem na tabela card_images
+        $cardImage = new CardImage();
+        $cardImage->card_id = $card->id;
+        $cardImage->image_path = $imgName;
+        $cardImage->save();
+    }
+}
 
     // Salvar dias e horários na tabela card_horarios
     if ($request->has('horarios')) {
@@ -109,8 +124,11 @@ public function store(Request $request)
             }
         }
     }
+
     return redirect('/cards')->with('success', 'Card cadastrado com sucesso');
 }
+
+
 
 
     // Exclui um card do banco de dados
@@ -131,17 +149,24 @@ public function store(Request $request)
         return redirect('/cards'); // Redireciona para a página dos cards
     }
 
-    //Mostra a tela específica do card selecionado
-    public function show($id)
-    {
-        $card = Card::findOrFail($id); // Encontra o card ou lança um erro 404 se não for encontrado
+   // Mostra a tela específica do card selecionado
+public function show($id)
+{
+    // Carrega o card junto com as imagens e horários associados
+    $card = Card::with(['images', 'horarios'])->findOrFail($id);
 
-        // Converte a string de dias em um array para exibição
-        $daysArray = explode(',', $card->days);
+    // Converte a string de dias em um array para exibição
+    $daysArray = explode(',', $card->days);
 
-        return view('dashboard.details', compact('card', 'daysArray'));
+    // Organiza os horários por dia da semana
+    $horariosAgrupados = [];
+    foreach ($card->horarios as $horario) {
+        $horariosAgrupados[$horario->dia][] = $horario->horario;
     }
-    
+
+    // Retorna a view com o card, os dias e os horários agrupados
+    return view('dashboard.details', compact('card', 'daysArray', 'horariosAgrupados'));
+}
 
     // Edita os dados de um card existente
     public function edit($id)

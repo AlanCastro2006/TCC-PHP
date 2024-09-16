@@ -12,6 +12,10 @@ class Card extends Model
         return $this->hasMany(CardHorario::class);
     }
     
+    public function images()
+{
+    return $this->hasMany(CardImage::class);
+}
 
     /**
      * Define o nome da tabela associada ao modelo.
