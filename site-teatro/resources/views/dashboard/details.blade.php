@@ -3,6 +3,25 @@
 @section('title', $card->name)
 
 @section('content')
+<!-- Carrossel de Imagens -->
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            @foreach($card->images as $index => $image)
+                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                <img src="{{ asset('img/cards/' . $image->image_path) }}" class="d-block w-100" alt="Imagem {{ $index + 1 }}">
+                </div>
+            @endforeach
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Próximo</span>
+        </button>
+    </div>
+
 <div class="container mt-5">
     <h1>{{ $card->name }}</h1>
     <img src="{{ asset('img/cards/' . $card->img) }}" alt="{{ $card->name }}" class="img-fluid">
@@ -14,6 +33,20 @@
     @else
     <p><strong>Temporada:</strong> Informação indisponível</p>
     @endif
+<!-- Exibição dos horários agrupados por dia -->
+@if(!empty($horariosAgrupados))
+    <p><strong>Horários:</strong></p>
+    @foreach($horariosAgrupados as $dia => $horarios)
+        <p><strong>{{ $dia }}:</strong></p>
+        <ul>
+            @foreach($horarios as $horario)
+                <li>{{ \Carbon\Carbon::parse($horario)->format('H:i') }}</li>
+            @endforeach
+        </ul>
+    @endforeach
+@else
+    <p><strong>Horários:</strong> Não há horários cadastrados.</p>
+@endif
     <p><strong>Dias da Semana:</strong> {{ implode(', ', $daysArray) }}</p>
     <p><strong>Texto:</strong> {{ $card->texto }}</p>
     <p><strong>Elenco:</strong> {{ $card->elenco }}</p>
@@ -41,6 +74,7 @@
     @if($card->agradecimentos)
     <p><strong>Agradecimentos:</strong> {{ $card->agradecimentos }}</p>
     @endif
+
 
 
 
