@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->timestamps();
+            $table->string('img');
             $table->boolean('visible')->default(true);
             $table->string('ticket_link')->nullable();
             $table->string('classification')->nullable();
