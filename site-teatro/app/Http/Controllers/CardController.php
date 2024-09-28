@@ -135,20 +135,15 @@ class CardController extends Controller
         return redirect('/cards')->with('success', 'Card cadastrado com sucesso');
     }
 
-    public function updateVisibility($id)
-{
-    // Encontrar o card pelo ID
-    $card = Card::find($id);
+    // Atualiza a visibilidade de um card
+    public function updateVisibility(Request $request, $id)
+    {
+        $card = Card::findOrFail($id); // Encontra o card pelo ID
+        $card->visible = $request->has('visible'); // Atualiza a visibilidade do card
+        $card->save(); // Salva as mudanças no banco de dados
 
-    if ($card) {
-        // Alternar o valor do campo 'visible' (0 para 1, ou 1 para 0)
-        $card->visible = !$card->visible;
-        $card->save();
+        return redirect('/cards')->with('success', 'Visibilidade do card atualizada com sucesso'); // Redireciona com uma mensagem de sucesso
     }
-
-    // Redirecionar de volta para a página anterior
-    return redirect()->back()->with('status', 'Visibilidade atualizada com sucesso!');
-}
 
     public function showHomepage()
 {
