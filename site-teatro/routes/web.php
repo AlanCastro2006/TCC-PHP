@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ContactController;
@@ -28,7 +29,3 @@ Route::middleware('auth:adm')->group(function () {
     Route::delete('/cards/{id}', [CardController::class, 'destroy']);
     Route::put('/cards/{id}/visibility', [CardController::class, 'updateVisibility']);
 });
-
-
-
-

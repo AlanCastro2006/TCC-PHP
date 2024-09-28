@@ -5,22 +5,22 @@
 @section('content')
 <!-- Carrossel de Imagens -->
 <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            @foreach($card->images as $index => $image)
-                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                <img src="{{ asset('img/cards/' . $image->image_path) }}" class="d-block w-100" alt="Imagem {{ $index + 1 }}">
-                </div>
-            @endforeach
+    <div class="carousel-inner">
+        @foreach($card->images as $index => $image)
+        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+            <img src="{{ asset('img/cards/' . $image->image_path) }}" class="d-block w-100" alt="Imagem {{ $index + 1 }}">
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Anterior</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Próximo</span>
-        </button>
+        @endforeach
     </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Próximo</span>
+    </button>
+</div>
 
 <div class="container mt-5">
     <h1>{{ $card->name }}</h1>
@@ -33,21 +33,21 @@
     @else
     <p><strong>Temporada:</strong> Informação indisponível</p>
     @endif
-<!-- Exibição dos horários agrupados por dia -->
-@if(!empty($horariosAgrupados))
-    <p><strong>Horários:</strong></p>
-    @foreach($horariosAgrupados as $dia => $horarios)
-        <p><strong>{{ $dia }}:</strong></p>
+    <!-- Exibir os dias e os horários -->
+    @if ($horarios->isNotEmpty())
+    @foreach ($horarios as $dia => $horas)
+    <div>
+        <h4>{{ ucfirst($dia) }}</h4> <!-- Nome do dia da semana -->
         <ul>
-            @foreach($horarios as $horario)
-                <li>{{ \Carbon\Carbon::parse($horario)->format('H:i') }}</li>
+            @foreach ($horas as $horario)
+            <li>{{ \Carbon\Carbon::createFromFormat('H:i:s', $horario->horario)->format('H:i') }}</li> <!-- Exibe horas e minutos -->
             @endforeach
         </ul>
+    </div>
     @endforeach
-@else
-    <p><strong>Horários:</strong> Não há horários cadastrados.</p>
-@endif
-    <p><strong>Dias da Semana:</strong> {{ implode(', ', $daysArray) }}</p>
+    @else
+    <p>Nenhum horário disponível.</p>
+    @endif
     <p><strong>Texto:</strong> {{ $card->texto }}</p>
     <p><strong>Elenco:</strong> {{ $card->elenco }}</p>
     <p><strong>Direção:</strong> {{ $card->direcao }}</p>
