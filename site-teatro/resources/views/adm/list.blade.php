@@ -472,12 +472,13 @@
                                                                         <div class="form-floating mb-3">
                                                                             <input type="text" class="form-control" required name="season"
                                                                                 id="season" placeholder="De DD/MM/YYYY a DD/MM/YYYY"
-                                                                                value="{{ old('season', ($card->season_start ? \Carbon\Carbon::parse($card->season_start)->format('d/m/Y') : 'Data de início não disponível') . ' a ' . ($card->season_end ? \Carbon\Carbon::parse($card->season_end)->format('d/m/Y') : 'Data de fim não disponível')) }}">
+                                                                                value="{{ old('season', $card->season_start && $card->season_end ? \Carbon\Carbon::parse($card->season_start)->format('d/m/Y') . ' to ' . \Carbon\Carbon::parse($card->season_end)->format('d/m/Y') : '') }}">
                                                                             <label for="season">Temporada</label>
                                                                             @error('season')
                                                                             <div class="alert alert-danger">{{ $message }}</div>
                                                                             @enderror
                                                                         </div>
+
 
                                                                         <!-- Dias da semana e horários -->
                                                                         <div class="mb-3">
@@ -827,93 +828,101 @@
 
 
 
-   // Script dos Inputs de Sessões de Apresentação (Edição)
+    // Script dos Inputs de Sessões de Apresentação (Edição)
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Mostrar ou ocultar o campo de horário quando marcar o checkbox (edição)
-    document.querySelectorAll('.checkbox-day-editar').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            let dia = this.value;
-            let horariosDiv = document.getElementById('horarios-editar-' + dia);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mostrar ou ocultar o campo de horário quando marcar o checkbox (edição)
+        document.querySelectorAll('.checkbox-day-editar').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                let dia = this.value;
+                let horariosDiv = document.getElementById('horarios-editar-' + dia);
 
-            if (this.checked) {
-                horariosDiv.classList.remove('d-none');
-            } else {
-                horariosDiv.classList.add('d-none');
-                horariosDiv.querySelector('.horario-wrapper-editar').innerHTML = ''; // Remove os horários quando desmarcar o checkbox
-            }
+                if (this.checked) {
+                    horariosDiv.classList.remove('d-none');
+                } else {
+                    horariosDiv.classList.add('d-none');
+                    horariosDiv.querySelector('.horario-wrapper-editar').innerHTML = ''; // Remove os horários quando desmarcar o checkbox
+                }
+            });
+        });
+
+        // Função para adicionar eventos de remover horário (edição)
+        function adicionarEventoRemoverHorarioEditar(botao) {
+            botao.addEventListener('click', function() {
+                this.parentElement.remove(); // Remove o div que contém o input de horário
+            });
+        }
+
+        // Adicionar mais horários (edição)
+        document.querySelectorAll('.btn-adicionar-horario-editar').forEach(function(button) {
+            button.addEventListener('click', function() {
+                let dia = this.getAttribute('data-dia');
+                let horariosWrapper = document.querySelector('#horarios-editar-' + dia + ' .horario-wrapper-editar');
+
+                if (horariosWrapper) {
+                    // Cria um novo div para o horário e o botão de remover
+                    let horarioDiv = document.createElement('div');
+                    horarioDiv.classList.add('d-flex', 'align-items-center', 'mb-2');
+
+                    // Cria o input de horário
+                    let novoHorario = document.createElement('input');
+                    novoHorario.type = 'time';
+                    novoHorario.name = 'horarios_editar[' + dia + '][]';
+                    novoHorario.classList.add('form-control', 'me-2');
+
+                    // Cria o botão de remover
+                    let botaoRemover = document.createElement('button');
+                    botaoRemover.type = 'button';
+                    botaoRemover.classList.add('btn', 'btn-danger', 'btn-remover-horario-editar');
+                    botaoRemover.textContent = 'Remover';
+
+                    // Adiciona o input e o botão de remover ao div
+                    horarioDiv.appendChild(novoHorario);
+                    horarioDiv.appendChild(botaoRemover);
+
+                    // Adiciona o novo div ao wrapper
+                    horariosWrapper.appendChild(horarioDiv);
+
+                    // Adiciona o evento ao botão de remover
+                    adicionarEventoRemoverHorarioEditar(botaoRemover);
+                } else {
+                    console.error('Wrapper de horários não encontrado para o dia:', dia);
+                }
+            });
+        });
+
+        // Adiciona o evento de remover horário aos botões já existentes (edição)
+        document.querySelectorAll('.btn-remover-horario-editar').forEach(function(button) {
+            adicionarEventoRemoverHorarioEditar(button);
         });
     });
-
-    // Função para adicionar eventos de remover horário (edição)
-    function adicionarEventoRemoverHorarioEditar(botao) {
-        botao.addEventListener('click', function() {
-            this.parentElement.remove(); // Remove o div que contém o input de horário
-        });
-    }
-
-    // Adicionar mais horários (edição)
-    document.querySelectorAll('.btn-adicionar-horario-editar').forEach(function(button) {
-        button.addEventListener('click', function() {
-            let dia = this.getAttribute('data-dia');
-            let horariosWrapper = document.querySelector('#horarios-editar-' + dia + ' .horario-wrapper-editar');
-
-            if (horariosWrapper) {
-                // Cria um novo div para o horário e o botão de remover
-                let horarioDiv = document.createElement('div');
-                horarioDiv.classList.add('d-flex', 'align-items-center', 'mb-2');
-
-                // Cria o input de horário
-                let novoHorario = document.createElement('input');
-                novoHorario.type = 'time';
-                novoHorario.name = 'horarios_editar[' + dia + '][]';
-                novoHorario.classList.add('form-control', 'me-2');
-
-                // Cria o botão de remover
-                let botaoRemover = document.createElement('button');
-                botaoRemover.type = 'button';
-                botaoRemover.classList.add('btn', 'btn-danger', 'btn-remover-horario-editar');
-                botaoRemover.textContent = 'Remover';
-
-                // Adiciona o input e o botão de remover ao div
-                horarioDiv.appendChild(novoHorario);
-                horarioDiv.appendChild(botaoRemover);
-
-                // Adiciona o novo div ao wrapper
-                horariosWrapper.appendChild(horarioDiv);
-
-                // Adiciona o evento ao botão de remover
-                adicionarEventoRemoverHorarioEditar(botaoRemover);
-            } else {
-                console.error('Wrapper de horários não encontrado para o dia:', dia);
-            }
-        });
-    });
-
-    // Adiciona o evento de remover horário aos botões já existentes (edição)
-    document.querySelectorAll('.btn-remover-horario-editar').forEach(function(button) {
-        adicionarEventoRemoverHorarioEditar(button);
-    });
-});
-
 </script>
 
 @section('scripts')
 <script>
     flatpickr("#season", {
-        mode: "range",
-        dateFormat: "d/m/Y",
-        allowInput: true
-    });
+    mode: "range",
+    dateFormat: "d/m/Y",
+    allowInput: true,
+    onReady: function(selectedDates, dateStr, instance) {
+        // Quando o flatpickr está pronto, ele já pega o valor existente no input e processa.
+        console.log("Flatpickr pronto com valor:", dateStr);
+    },
+    onChange: function(selectedDates, dateStr, instance) {
+        // Função chamada quando o valor é alterado
+        console.log("Datas selecionadas:", selectedDates);
+    }
+});
 
-    $(document).ready(function() {
-        $('#card-form').submit(function(e) {
-            var days = $('#days').val();
-            if (days.length === 0) {
-                alert('Você deve selecionar pelo menos um dia da semana.');
-                e.preventDefault();
-            }
-        });
+$(document).ready(function() {
+    $('#card-form').submit(function(e) {
+        var days = $('#days').val();
+        if (days.length === 0) {
+            alert('Você deve selecionar pelo menos um dia da semana.');
+            e.preventDefault();
+        }
     });
+});
+
 </script>
 @endsection
