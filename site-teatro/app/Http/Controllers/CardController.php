@@ -30,7 +30,7 @@ class CardController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'img1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',          
+            'img1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'img2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'img3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'img4' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -41,7 +41,7 @@ class CardController extends Controller
             'duration' => 'nullable|string',
             'season' => 'required|string',
             'days' => 'required|array|min:1|in:domingo,segunda,terça,quarta,quinta,sexta,sábado',
-            'horarios' => 'required|array', 
+            'horarios' => 'required|array',
             'texto' => 'required|string|max:255',
             'elenco' => 'required|string|max:255',
             'direcao' => 'required|string|max:255',
@@ -136,114 +136,148 @@ class CardController extends Controller
     }
 
     public function showHomepage()
-{
-    // Obtém todos os cards disponíveis
-    $cards = Card::all();
-    
-    // Retorna a view da página inicial com os cards
-    return view('dashboard.home', compact('cards'));
-}
+    {
+        // Obtém todos os cards disponíveis
+        $cards = Card::all();
 
-
-public function show($id)
-{
-    // Carrega o card junto com as imagens associadas
-    $card = Card::with('images')->findOrFail($id);
-
-    // Converte a string de dias em um array, se a coluna days existir e não estiver vazia
-    $daysArray = [];
-    if ($card->days) {
-        $daysArray = explode(',', $card->days);
+        // Retorna a view da página inicial com os cards
+        return view('dashboard.home', compact('cards'));
     }
 
-    // Carrega os horários associados ao card e agrupa por dia
-    $horarios = CardHorario::where('card_id', $card->id)
-                ->orderBy('dia') // Ordena por dia da semana
-                ->get()
-                ->groupBy('dia'); // Agrupa por dia
 
-    // Retorna a view com os dados do card, dias e horários
-    return view('dashboard.details', compact('card', 'daysArray', 'horarios'));
-}
+    public function show($id)
+    {
+        // Carrega o card junto com as imagens associadas
+        $card = Card::with('images')->findOrFail($id);
+
+        // Converte a string de dias em um array, se a coluna days existir e não estiver vazia
+        $daysArray = [];
+        if ($card->days) {
+            $daysArray = explode(',', $card->days);
+        }
+
+        // Carrega os horários associados ao card e agrupa por dia
+        $horarios = CardHorario::where('card_id', $card->id)
+            ->orderBy('dia') // Ordena por dia da semana
+            ->get()
+            ->groupBy('dia'); // Agrupa por dia
+
+        // Retorna a view com os dados do card, dias e horários
+        return view('dashboard.details', compact('card', 'daysArray', 'horarios'));
+    }
 
     // Exibe o formulário de edição de um card
+
     public function edit($id)
     {
-        $card = Card::findOrFail($id);
+        // Recuperar o card e seus horários relacionados
+        $card = Card::with('horarios')->findOrFail($id);
 
-            // Definindo os dias da semana
-    $days = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+        // Formatar os horários em um array associativo
+        $horarios = [];
+        foreach ($card->horarios as $horario) {
+            $dia = $horario->dia;
+            if (!isset($horarios[$dia])) {
+                $horarios[$dia] = [];
+            }
+            $horarios[$dia][] = $horario->horario;
+        }
 
-        return view('adm.edit', compact('card'));
+        // Converte a string de dias em um array, se a coluna days existir e não estiver vazia
+        $daysArray = [];
+        if ($card->days) {
+            $daysArray = explode(',', $card->days);
+        }
+
+        // Definindo os dias da semana
+        $days = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+
+        // Retornar a view de edição com os dados do card, horários e dias
+        return view('adm.list', compact('card', 'horarios', 'days', 'daysArray'));
     }
 
     // Atualiza os dados de um card no banco de dados
     public function update(Request $request, $id)
-{
-    // Validação dos dados
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'ticket_link' => 'nullable|url',
-        'classification' => 'required|string',
-        'description' => 'nullable|string',
-        'duration' => 'nullable|string',
-        'season' => 'required|string',
-        'days' => 'required|array|min:1|in:domingo,segunda,terça,quarta,quinta,sexta,sábado',
-        'horarios' => 'required|array',
-    ]);
+    {
+        // Encontrar o card pelo ID
+        $card = Card::findOrFail($id);
 
-    // Encontra o card existente
-    $card = Card::findOrFail($id);
+        // Validação dos campos 'days' e 'horarios'
+        $validatedData = $request->validate([
+            'days_editar' => 'required|array',
+            'days_editar.*' => 'string',
+            'horarios_editar' => 'required|array',
+            'horarios_editar.*' => 'array',
+            'horarios_editar.*.*' => 'date_format:H:i',
+        ]);
 
+        // Atualizar os dias no card
+        $card->days = implode(',', $validatedData['days_editar']);
+        $card->save();
 
+        // Remover os horários atuais
+        $card->horarios()->delete();
 
-    // Atualiza a temporada
-// Divide a string de temporada em datas
-    $seasonDates = explode(' a ', $request->season);
-    
-    // Formata as datas
-    $seasonStart = \Carbon\Carbon::createFromFormat('d/m/Y', trim($seasonDates[0]))->toDateString();
-    $seasonEnd = \Carbon\Carbon::createFromFormat('d/m/Y', trim($seasonDates[1]))->toDateString();
-    
-        // Atualiza os campos
-        $card->name = $request->name;
-        $card->ticket_link = $request->ticket_link;
-        $card->classification = $request->classification;
-        $card->description = $request->description;
-        $card->duration = $request->duration;
-        $card->season_start = $seasonStart;
-        $card->season_end = $seasonEnd;
-
-
-    // Atualiza os dias
-    $card->days = implode(',', $request->days);
-
-    // Verifica se uma nova imagem de capa foi enviada
-    if ($request->hasFile('img') && $request->file('img')->isValid()) {
-        $imgName = md5($request->file('img')->getClientOriginalName() . strtotime("now")) . '.' . $request->img->extension();
-        $request->file('img')->move(public_path('img/cards'), $imgName);
-        $card->img = $imgName;
-    }
-
-    $card->save(); // Salva as atualizações
-
-    // Atualiza os horários
-    CardHorario::where('card_id', $card->id)->delete(); // Remove os horários antigos
-    foreach ($request->horarios as $dia => $horarios) {
-        foreach ($horarios as $horario) {
-            if (!empty($horario)) {
-                $cardHorario = new CardHorario();
-                $cardHorario->card_id = $card->id;
-                $cardHorario->dia = $dia;
-                $cardHorario->horario = $horario;
-                $cardHorario->save();
+        // Adicionar os novos dias e horários
+        foreach ($validatedData['days_editar'] as $day) {
+            if (isset($validatedData['horarios_editar'][$day])) {
+                foreach ($validatedData['horarios_editar'][$day] as $horario) {
+                    $card->horarios()->create([
+                        'dia' => $day,
+                        'horario' => $horario,
+                    ]);
+                }
             }
         }
-    }
 
-    return redirect()->route('cards.show', $card->id)->with('success', 'Card atualizado com sucesso!');
-}
+        // Atualizar a imagem de capa
+        if ($request->hasFile('img')) {
+            // Excluir a imagem de capa antiga
+            $oldCoverImagePath = public_path('img/cards/' . $card->img);
+            if (file_exists($oldCoverImagePath)) {
+                unlink($oldCoverImagePath); // Exclui a imagem de capa antiga do servidor
+            }
+
+            // Salvar a nova imagem de capa
+            $coverFile = $request->file('img');
+            $coverFilename = time() . '_cover_' . $coverFile->getClientOriginalName();
+            $coverFile->move(public_path('img/cards'), $coverFilename); // Move a nova imagem de capa para a pasta correta
+            $card->img = $coverFilename; // Atualiza o campo `img` no banco de dados
+        }
+
+        // Obter as imagens antigas do banner
+        $oldBannerImages = $card->images()->get();
+
+        // Excluir as imagens antigas do banner
+        foreach ($oldBannerImages as $image) {
+            $imagePath = public_path('img/cards/' . $image->image_path);
+            if (file_exists($imagePath)) {
+                unlink($imagePath); // Exclui a imagem do servidor
+            }
+            $image->delete(); // Remove a entrada do banco de dados
+        }
+
+        // Salvar as novas imagens do banner
+        $newImages = [];
+        for ($i = 1; $i <= 5; $i++) {
+            if ($request->hasFile('img' . $i)) {
+                $file = $request->file('img' . $i);
+                $filename = time() . '_banner_' . $i . '_' . $file->getClientOriginalName();
+                $file->move(public_path('img/cards'), $filename); // Move a imagem do banner para a pasta correta
+                $newImages[] = ['card_id' => $id, 'image_path' => $filename];
+            }
+        }
+
+        // Adiciona as novas imagens do banner ao banco de dados
+        if (!empty($newImages)) {
+            $card->images()->insert($newImages);
+        }
+
+        // Salva as alterações no card
+        $card->save();
+
+        return redirect('/cards')->with('success', 'Card atualizado com sucesso'); // Redireciona com uma mensagem de sucesso
+    }
 
     // Exclui um card
     public function destroy($id)
@@ -274,5 +308,14 @@ public function show($id)
         $card->delete();
 
         return redirect('/cards')->with('success', 'Card excluído com sucesso');
+    }
+
+    // Atualiza a visibilidade de um card
+    public function updateVisibility(Request $request, $id)
+    {
+        $card = Card::findOrFail($id); // Encontra o card pelo ID
+        $card->visible = $request->has('visible'); // Atualiza a visibilidade do card
+        $card->save(); // Salva as mudanças no banco de dados
+        return redirect('/cards')->with('success', 'Visibilidade do card atualizada com sucesso'); // Redireciona com uma mensagem de sucesso
     }
 }
