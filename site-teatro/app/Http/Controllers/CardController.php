@@ -202,6 +202,67 @@ class CardController extends Controller
         // Encontrar o card pelo ID
         $card = Card::findOrFail($id);
 
+    // Separar o intervalo de datas
+    $season = explode(' to ', $request->input('season'));
+    $season_start = isset($season[0]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[0])->format('Y-m-d') : null;
+    $season_end = isset($season[1]) ? \Carbon\Carbon::createFromFormat('d/m/Y', $season[1])->format('Y-m-d') : null;
+
+    // Validação dos dados
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'ticket_link' => 'nullable|url',
+        'classification' => 'required|string',
+        'description' => 'nullable|string',
+        'duration' => 'nullable|string',
+        'season' => 'required|string',
+        'days' => 'array|in:domingo,segunda,terça,quarta,quinta,sexta,sabado',
+        // Novos campos obrigatórios
+        'texto' => 'required|string|max:255',
+        'elenco' => 'required|string|max:255',
+        'direcao' => 'required|string|max:255',
+        'figurino' => 'required|string|max:255',
+        'cenografia' => 'required|string|max:255',
+        'iluminacao' => 'required|string|max:255',
+        'sonorizacao' => 'required|string|max:255',
+        'producao' => 'required|string|max:255',
+        // Novos campos opcionais
+        'costureira' => 'nullable|string|max:255',
+        'assistente_cenografia' => 'nullable|string|max:255',
+        'cenotecnico' => 'nullable|string|max:255',
+        'consultoria_design' => 'nullable|string|max:255',
+        'co_producao' => 'nullable|string|max:255',
+        'agradecimentos' => 'nullable|string'
+    ]);
+
+
+    // Atualiza os atributos do card com os novos valores do formulário
+    $card->name = $request->name;
+    $card->season_start = $season_start;
+    $card->season_end = $season_end;
+    $card->days = implode(',', $request->days ?? []);
+    $card->ticket_link = $request->ticket_link;
+    $card->classification = $request->classification;
+    $card->description = $request->description;
+    $card->duration = $request->duration;
+    // Atualiza os novos campos
+    $card->texto = $request->texto;
+    $card->elenco = $request->elenco;
+    $card->direcao = $request->direcao;
+    $card->figurino = $request->figurino;
+    $card->cenografia = $request->cenografia;
+    $card->iluminacao = $request->iluminacao;
+    $card->sonorizacao = $request->sonorizacao;
+    $card->producao = $request->producao;
+    // Atualiza os campos opcionais
+    $card->costureira = $request->costureira;
+    $card->assistente_cenografia = $request->assistente_cenografia;
+    $card->cenotecnico = $request->cenotecnico;
+    $card->consultoria_design = $request->consultoria_design;
+    $card->co_producao = $request->co_producao;
+    $card->agradecimentos = $request->agradecimentos;
+
+
         // Validação dos campos 'days' e 'horarios'
         $validatedData = $request->validate([
             'days_editar' => 'required|array',
@@ -210,6 +271,8 @@ class CardController extends Controller
             'horarios_editar.*' => 'array',
             'horarios_editar.*.*' => 'date_format:H:i',
         ]);
+
+        
 
         // Atualizar os dias no card
         $card->days = implode(',', $validatedData['days_editar']);
